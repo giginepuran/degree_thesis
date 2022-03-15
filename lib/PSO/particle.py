@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import random
-from PSO.particle import *
+from lib.PSO.particle import *
 
 
 class Particle:

@@ -1,5 +1,5 @@
 import sys, numpy as np
-from PSO.particle import *
+from lib.PSO.particle import *
 
 
 class Swarm:

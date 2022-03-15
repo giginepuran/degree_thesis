@@ -1,9 +1,9 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from pyDriveLib import Build
-from pyDriveLib import Get
-from pyDriveLib import Put
-from py import Transfer
+from lib.pyDriveLib import Build
+from lib.pyDriveLib import Get
+from lib.pyDriveLib import Put
+import Transfer
 import os
 import time
 
