@@ -1,0 +1,320 @@
+# pattern:
+# 2121 2
+#
+# 2100 1
+# 2120 2
+# 1111 1
+# 2122 2
+switchtolayout;
+deleteall;
+# 1:for python, 2:for lumerical
+mode = 1;
+if (mode == 1)
+{
+    l1 = para1__*1e-9;
+    l2 = para2__*1e-9;
+    l3 = para3__*1e-9;
+    l4 = para4__*1e-9;
+    l5 = para5__*1e-9;
+    deep    = 220*1e-9;
+    shallow = 70*1e-9;
+} else if (mode == 2)
+{
+    l1 = 250*1e-9;
+    l2 = 250*1e-9;
+    l3 = 250*1e-9;
+    l4 = 250*1e-9;
+    l5 = 250*1e-9;
+    deep    = 220*1e-9;
+    shallow = 70*1e-9;
+}
+unit = (l1+l2+l3+l4+l5);
+N = 5;
+scale = N * unit;
+height = 220e-9;
+
+# platform-------------------------------------------
+# BOX
+addrect;
+set("name","BOX");
+set("x min", -5e-6);
+set("x max", scale + 10e-6);
+set("y min", -5e-6);
+set("y max", scale + 10e-6);
+set("z min", -2e-6);
+set("z max", 0);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+# overcladding
+addrect;
+set("name","overcladding");
+set("x min", -5e-6);
+set("x max", scale + 10e-6);
+set("y min", -5e-6);
+set("y max", scale + 10e-6);
+set("z min", height);
+set("z max", height+2e-6);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+# sidecladding
+addrect;
+set("name","sidecladding");
+set("x min", -5e-6);
+set("x max", scale + 10e-6);
+set("y min", -5e-6);
+set("y max", scale + 10e-6);
+set("z min", 0);
+set("z max", height);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",6);
+
+# waveguides
+addrect;
+set("name","wg1");
+set("x min", 0);
+set("x max", scale);
+set("y min", scale);
+set("y max", scale+7e-6);
+set("z min", 0);
+set("z max", height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+addrect;
+set("name","wg2");
+set("x min", scale);
+set("x max", scale+7e-6);
+set("y min", 0);
+set("y max", scale);
+set("z min", 0);
+set("z max", height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+
+# pattern:
+# 21212
+# 21001
+# 21202
+# 11111
+# 21222
+# grating area
+xy = 0:unit:unit*(N-1);
+# silicon (2)
+# pattern:
+# 2 2 2
+# 2    
+# 2 2 2
+#      
+# 2 222
+for (i = 1:1:N)
+{
+    for (j = 1:1:N)
+    {
+        addrect;
+        set("name","silicon"+num2str(i*10+j));
+        set("x min", xy(i));
+        set("x max", xy(i)+unit);
+        set("y min", xy(j));
+        set("y max", xy(j)+unit);
+        set("z min", 0);
+        set("z max", height);
+        set("material","Si (Silicon) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",4);
+    }
+}
+# deep etching
+# pattern:
+#      
+#   00 
+#    0 
+#      
+#      
+for (i = 1:1:N)
+{
+    for (j = 1:1:N)
+    {
+        addrect;
+        set("name","deep_"+num2str(i*10+j)+"_1");
+        set("x min", xy(i)+l1+l2);
+        set("x max", xy(i)+l1+l2+l3+l4);
+        set("y min", xy(j)+l1+l2+l3);
+        set("y max", xy(j)+l1+l2+l3+l4);
+        set("z min", height-deep);
+        set("z max", height);
+        set("material","SiO2 (Glass) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",3);
+        
+        addrect;
+        set("name","deep_"+num2str(i*10+j)+"_2");
+        set("x min", xy(i)+l1+l2+l3);
+        set("x max", xy(i)+l1+l2+l3+l4);
+        set("y min", xy(j)+l1+l2);
+        set("y max", xy(j)+l1+l2+l3+l4);
+        set("z min", height-deep);
+        set("z max", height);
+        set("material","SiO2 (Glass) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",2);
+    }
+}
+# shallow etching
+# pattern:
+#  1 1 
+#  1  1
+#  1   
+# 11111
+#  1   
+for (i = 1:1:N)
+{
+    for (j = 1:1:N)
+    {
+        addrect;
+        set("name","shallow_"+num2str(i*10+j)+"_1");
+        set("x min", xy(i));
+        set("x max", xy(i)+unit);
+        set("y min", xy(j)+l1);
+        set("y max", xy(j)+l1+l2);
+        set("z min", height-shallow);
+        set("z max", height);
+        set("material","SiO2 (Glass) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",3);
+        
+        addrect;
+        set("name","shallow_"+num2str(i*10+j)+"_2");
+        set("x min", xy(i)+l1);
+        set("x max", xy(i)+l1+l2);
+        set("y min", xy(j));
+        set("y max", xy(j)+unit);
+        set("z min", height-shallow);
+        set("z max", height);
+        set("material","SiO2 (Glass) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",2);
+        
+        addrect;
+        set("name","shallow_"+num2str(i*10+j)+"_3");
+        set("x min", xy(i)+l1+l2+l3);
+        set("x max", xy(i)+l1+l2+l3+l4);
+        set("y min", xy(j)+l1+l2+l3+l4);
+        set("y max", xy(j)+unit);
+        set("z min", height-shallow);
+        set("z max", height);
+        set("material","SiO2 (Glass) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",3);
+        
+        addrect;
+        set("name","shallow_"+num2str(i*10+j)+"_4");
+        set("x min", xy(i)+l1+l2+l3+l4);
+        set("x max", xy(i)+unit);
+        set("y min", xy(j)+l1+l2+l3);
+        set("y max", xy(j)+l1+l2+l3+l4);
+        set("z min", height-shallow);
+        set("z max", height);
+        set("material","SiO2 (Glass) - Palik");
+        set("override mesh order from material database",1);
+        set("mesh order",3);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+# solver-----------------------------------------
+addfdtd;
+set("dimension", 2);  #  1 = 2D, 2 = 3D
+set("x min", -2e-6);
+set("x max", scale + 2e-6);
+set("y min", -2e-6);
+set("y max", scale + 2e-6);
+set("z min", -1e-6);
+set("z max", height+1e-6);
+
+# monitor ----------------------------------------
+# wg1(+y)
+addpower;
+set("name","P_wg1");
+set("monitor type","2D Y-normal");
+set("x min", 0-1e-6);
+set("x max", scale+1e-6);
+set("y", scale + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# wg2(+x)
+addpower;
+set("name","P_wg2");
+set("monitor type","2D X-normal");
+set("x", scale + 1e-6);
+set("y min", 0-1e-6);
+set("y max", scale + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# reflection monitor
+addpower;
+set("name","reflection");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", height+0.6e-6);
+
+# central top view
+addpower;
+set("name","top_view");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", height/2);
+
+# transmission monitor
+addpower;
+set("name","trasmission");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", -0.6e-6);
+
+# source-------------------------------------------
+addgaussian;
+set("injection axis","z");
+set("direction","Backward");
+set("x", scale/2);
+set("x span",10e-6);
+set("y", scale/2);
+set("y span",10e-6);
+set("z", height+0.5e-6);
+set("angle phi", 45);
+set("angle theta", 0);
+set("polarization angle", 45);
+set("use scalar approximation",1);
+set("waist radius w0", 4.6e-6/(20/N));
+set("center wavelength", 1.31e-6);
+set("wavelength span", 0);
+set("distance from waist", 0);
+

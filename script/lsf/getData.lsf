@@ -1,0 +1,3 @@
+T1 = transmission("P_wg1");
+T2 = transmission("P_wg2");
+FOM = T2;
