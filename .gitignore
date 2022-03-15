@@ -4,3 +4,4 @@
 *.json
 *.fsp
 *.txt
+local_main.py

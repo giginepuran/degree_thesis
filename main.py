@@ -1,16 +1,22 @@
-# This is a sample Python script.
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from oauth2client.service_account import ServiceAccountCredentials
+from lib.pyDriveLib import Build
+from lib.pyDriveLib import Get
+from lib.pyDriveLib import Put
+from lib.CommWithTaiwania import Taiwania
+import os
+import time
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
+# this is a template main, use local_main.py to run
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+gauth = GoogleAuth()
+scope = ["https://www.googleapis.com/auth/drive"]
+gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('./local/u6097335.json', scope)
+drive = GoogleDrive(gauth)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+transfer_folder_id = '1E057cpokP4uldG6ZdoMLrk6p4JTEwmJ9'
+# this must be a full path
+local_transfer_folder = 'C:/Users/clay0/workshop/coding/python/degree_thesis/local/transfer'
+Taiwania.taiwania_work(2, 5, drive, transfer_folder_id, local_transfer_folder)
