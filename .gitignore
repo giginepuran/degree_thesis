@@ -1,5 +1,6 @@
 /venv/
 /local/
+/.idea/
 *.json
 *.fsp
 *.txt
