@@ -1,11 +1,10 @@
 import shutil
-
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from lib.pyDriveLib import Build
 from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
-import Transfer
+from lib.CommWithTaiwania import Transfer
 import os
 import time
 from lib.PSO import swarm
@@ -46,7 +45,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('Recording parameters ...')
 
         print('Updating *.fsp to drive transfer folder ...')
-        if Transfer.update_fsps(fsp_list, local_transfer_folder, population):
+        if not Transfer.update_fsps(fsp_list, local_transfer_folder, population):
             return
 
         print('Updating mode.txt to drive transfer folder ...')

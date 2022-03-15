@@ -10,7 +10,7 @@ import time
 def keep_check_mode(mode_file, local_transfer_folder: str, mode_msg: str, period=30):
     while True:
         Get.download_drive_file(mode_file, dst=local_transfer_folder, move=True)
-        mode = os.popen(f'cat {local_transfer_folder}/mode.txt').read()
+        mode = open(f'{local_transfer_folder}/mode.txt','r').readlines()
         if mode_msg in mode:
             break
         else:
@@ -68,7 +68,7 @@ def update_fsps(fsp_file_list: list, local_transfer_folder: str, population: int
         if Put.update_file(fsp_file, f'{local_transfer_folder}/{title}'):
             suc_num = suc_num + 1
     if suc_num != population:
-        print(f'number of fsp files uploaded is wrong\nActually number : {act_num}\nExpected : {population}')
+        print(f'number of fsp files uploaded is wrong\nActually number : {suc_num}\nExpected : {population}')
         return False
     return True
 

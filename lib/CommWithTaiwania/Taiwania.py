@@ -3,7 +3,7 @@ from pydrive.drive import GoogleDrive
 from lib.pyDriveLib import Build
 from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
-import Transfer
+from lib.CommWithTaiwania import Transfer
 import os
 import time
 
