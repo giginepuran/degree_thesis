@@ -10,7 +10,7 @@ import time
 def keep_check_mode(mode_file, local_transfer_folder: str, mode_msg: str, period=30):
     while True:
         Get.download_drive_file(mode_file, dst=local_transfer_folder, move=True)
-        mode = open(f'{local_transfer_folder}/mode.txt','r').readlines()
+        mode = open(f'{local_transfer_folder}/mode.txt','r').read()
         if mode_msg in mode:
             break
         else:
@@ -18,11 +18,11 @@ def keep_check_mode(mode_file, local_transfer_folder: str, mode_msg: str, period
 
 
 def create_job_script(local_transfer_folder: str, population: int, generation: int):
-    if not (os.path.isdir(local_transfer_folder) and os.path.exists(f'./sh/fdtd_all_under.sh')):
-        print('./sh/fdtd_all_under.sh not exists')
+    if not (os.path.isdir(local_transfer_folder) and os.path.exists(f'./script/sh/fdtd_all_under.sh')):
+        print('./script/sh/fdtd_all_under.sh not exists')
         return
     with open(f'{local_transfer_folder}/qsub_script.sh', "w") as txt:
-        script = open('./sh/fdtd_all_under.sh', 'r').read()
+        script = open('./script/sh/fdtd_all_under.sh', 'r').read()
         script = script.replace('{population}', f'{population}')
         script = script.replace('{generation}', f'{generation}')
         script = script.replace('{transfer_folder}', f'{local_transfer_folder}')
@@ -74,5 +74,5 @@ def update_fsps(fsp_file_list: list, local_transfer_folder: str, population: int
 
 
 def change_mode_then_upload(mode_file, local_transfer_folder: str, mode_msg: str):
-    msg = os.popen(f'echo {mode_msg}  > {local_transfer_folder}/mode.txt').read()
+    msg = os.popen(f'echo {mode_msg} > {local_transfer_folder}/mode.txt').read()
     Put.update_file(mode_file, f'{local_transfer_folder}/mode.txt')

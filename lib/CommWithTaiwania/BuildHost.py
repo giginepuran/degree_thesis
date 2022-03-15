@@ -24,7 +24,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
     # fdtd = lumapi.FDTD(hide=True)
     print('loading lsf script ...')
     setBase = open('./script/lsf/setBase1.lsf', 'r').read()
-    getData = open('./script//lsf/getData.lsf', 'r').read()
+    getData = open('./script/lsf/getData.lsf', 'r').read()
     print('Build host start working ...\n')
 
     mode_file = Get.get_drive_file_by_subtitle(drive, transfer_folder_id, 'mode.txt', all_folder=False)[0]

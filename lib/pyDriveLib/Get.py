@@ -37,5 +37,6 @@ def rename_if_file_exists(path: str, filename: str):
 def download_drive_file(file, dst="", move=False):
     file.GetContentFile(file['title'])
     if move and os.path.isdir(dst):
-        msg = os.popen(f"mv {file['title']} {dst}/{file['title']}").read()
+        shutil.move('./mode.txt', f"{dst}/{file['title']}")
+
 
