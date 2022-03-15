@@ -59,7 +59,7 @@ def check_qsub_finish(local_transfer_folder: str, population: int, step=60, prin
     msg = os.popen(f'rm {local_transfer_folder}/finish.txt').read()
 
 
-def update_fsps(fsp_file_list: list, local_transfer_folder: str):
+def update_fsps(fsp_file_list: list, local_transfer_folder: str, population: int):
     suc_num = 0
     for fsp_file in fsp_file_list:
         title = fsp_file['title']
@@ -67,7 +67,10 @@ def update_fsps(fsp_file_list: list, local_transfer_folder: str):
             continue
         if Put.update_file(fsp_file, f'{local_transfer_folder}/{title}'):
             suc_num = suc_num + 1
-    return suc_num
+    if suc_num != population:
+        print(f'number of fsp files uploaded is wrong\nActually number : {act_num}\nExpected : {population}')
+        return False
+    return True
 
 
 def change_mode_then_upload(mode_file, local_transfer_folder: str, mode_msg: str):
