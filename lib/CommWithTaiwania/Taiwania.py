@@ -32,7 +32,7 @@ def taiwania_work(population: int, max_generation: int, drive: GoogleDrive,
 
         print('Downloading *.fsp ...')
         for fsp_file in fsp_list:
-            Get.download_drive_file(fsp_file, local_transfer_folder)
+            Get.download_drive_file(fsp_file, local_transfer_folder, move=True)
 
         print('Creating job script ...')
         Transfer.create_job_script(local_transfer_folder, 2, generation)
