@@ -16,10 +16,10 @@ def taiwania_work(population: int, max_generation: int, drive: GoogleDrive,
     print('-------------------------------------')
     print('Taiwania start working ...\n')
 
-    mode_file = Get.get_drive_file_by_subtitle(drive, transfer_folder_id, 'mode.txt', all_folder=False)[0]
-    fsp_list = Get.get_drive_file_by_subtitle(drive, transfer_folder_id, '.fsp', all_folder=False)
-    if len(fsp_list) != population:
-        print(f'number of fsp files is wrong\nActually number : {len(fsp_list)}\nExpected : {population}')
+    mode_file_info = Get.get_file_info_by_subtitle(drive, transfer_folder_id, 'mode.txt')[0]
+    fsp_info_list = Get.get_file_info_by_subtitle(drive, transfer_folder_id, '.fsp')
+    if len(fsp_info_list) != population:
+        print(f'number of fsp files is wrong\nActually number : {len(fsp_info_list)}\nExpected : {population}')
         return
 
     generation = 1
@@ -28,11 +28,11 @@ def taiwania_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Checking mode.txt ...')
-        Transfer.keep_check_mode(mode_file, local_transfer_folder, 'doing_fdtd', period=30)
+        Transfer.keep_check_mode(drive, mode_file_info, local_transfer_folder, 'doing_fdtd', period=30)
 
         print('Downloading *.fsp ...')
-        for fsp_file in fsp_list:
-            Get.download_drive_file(fsp_file, local_transfer_folder, move=True)
+        for fsp_info in fsp_info_list:
+            Get.download_drive_file(drive, fsp_info, local_transfer_folder, move=True)
 
         print('Creating job script ...')
         Transfer.create_job_script(local_transfer_folder, 2, generation)
@@ -44,13 +44,12 @@ def taiwania_work(population: int, max_generation: int, drive: GoogleDrive,
         Transfer.check_qsub_finish(local_transfer_folder, population, print_step_msg=True)
 
         print('Updating *.fsp to drive transfer folder ...')
-        act_num = Transfer.update_fsps(fsp_list, local_transfer_folder)
-        if act_num != population:
-            print(f'number of fsp files uploaded is wrong\nActually number : {act_num}\nExpected : {population}')
+        if not Transfer.update_fsps(drive, transfer_folder_id, fsp_info_list, local_transfer_folder, population):
             return
 
         print('Updating mode.txt to drive transfer folder ...')
-        Transfer.change_mode_then_upload(mode_file, local_transfer_folder, 'building_fsp')
+        Transfer.change_mode_then_upload(drive, transfer_folder_id,
+                                         mode_file_info, local_transfer_folder, 'building_fsp')
 
         print(f'calculating work of generation : {generation} finished!\n')
         generation = generation + 1

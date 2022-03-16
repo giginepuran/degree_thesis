@@ -15,6 +15,20 @@ def create_folder_to_id(drive: GoogleDrive, parent_id: str, folder_name: str):
     return folder
 
 
+def creat_file_to_id(drive: GoogleDrive, parent_id: str, local_file: str,
+                     change_name=False, put_name="file_name"):
+    if not os.path.exists(local_file):
+        return
+    file_metadata = {
+        'parents': [{'id': parent_id}],
+    }
+    file = drive.CreateFile(file_metadata)
+    file.SetContentFile(local_file)
+    original_filename = local_file[local_file.rfind('/')+1:]
+    file['title'] = put_name if change_name else original_filename
+    file.Upload()
+
+
 def put_file_to_id(drive: GoogleDrive, parent_id: str, drive_file_id: str, local_file: str,
                    change_name=False, put_name="file_name"):
     if not os.path.exists(local_file):
@@ -28,7 +42,6 @@ def put_file_to_id(drive: GoogleDrive, parent_id: str, drive_file_id: str, local
     original_filename = local_file[local_file.rfind('/')+1:]
     file['title'] = put_name if change_name else original_filename
     file.Upload()
-    return file
 
 
 # Compare to put_entire_dir_to_id, this function only put files,

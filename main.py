@@ -9,6 +9,7 @@ from lib.pyDriveLib import Build
 from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
 from lib.CommWithTaiwania import Taiwania
+from lib.CommWithTaiwania import BuildHost
 import os
 import time
 
@@ -20,8 +21,14 @@ drive = GoogleDrive(gauth)
 
 transfer_folder_id = '1E057cpokP4uldG6ZdoMLrk6p4JTEwmJ9'
 # this must be a full path
-local_transfer_folder = 'C:/Users/clay0/workshop/coding/python/degree_thesis/local/transfer'
-Taiwania.taiwania_work(3, 10, drive, transfer_folder_id, local_transfer_folder)
+local_transfer_folder = 'E:/degree_thesis/local/transfer'
+saving_path = 'E:/degree_thesis/local/saving_path'
+
+floor = [100, 100, 100, 50, 10]
+ceiling = [300, 300, 300, 200, 90]
+dimension = 5
+
+BuildHost.build_work(3, 10, drive, transfer_folder_id, local_transfer_folder, dimension, floor, ceiling, saving_path)
 """
 
 # taiwania local main template

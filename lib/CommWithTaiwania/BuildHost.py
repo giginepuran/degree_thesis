@@ -14,6 +14,9 @@ from lib.PSO import particle
 def build_work(population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
                dimension: int, floor: list, ceiling: list, saving_path: str):
+    print('Initializing transfer folder on google drive ...')
+    initialize_drive_transfer_folder(drive, transfer_folder_id, population)
+
     print('work flow settings:')
     print(f'max generation : {max_generation}')
     print(f'    population : {population}')
@@ -71,6 +74,15 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         # my_swarm.evolution()
 
         generation = generation + 1
+
+
+def initialize_drive_transfer_folder(drive: GoogleDrive, transfer_folder_id: str, population: int):
+    file_list = drive.ListFile({'q': f"'{transfer_folder_id}' in parents and trashed=false"}).GetList()
+    for file in file_list:
+        file.Delete()
+    for i in range(1, population+1):
+        Put.create_file_to_id(drive, transfer_folder_id, './local/ind_template.fsp',
+                              change_name=True, put_name=f'ind{i}.fsp')
 
 
 def build_saving_path():
