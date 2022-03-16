@@ -15,12 +15,13 @@ def create_folder_to_id(drive: GoogleDrive, parent_id: str, folder_name: str):
     return folder
 
 
-def put_file_to_id(drive: GoogleDrive, parent_id: str, local_file: str,
+def put_file_to_id(drive: GoogleDrive, parent_id: str, drive_file_id: str, local_file: str,
                    change_name=False, put_name="file_name"):
     if not os.path.exists(local_file):
         return
     file_metadata = {
         'parents': [{'id': parent_id}],
+        'id': drive_file_id
     }
     file = drive.CreateFile(file_metadata)
     file.SetContentFile(local_file)
@@ -63,10 +64,9 @@ def put_entire_dir_to_id(drive: GoogleDrive, parent_id: str, local_dir: str,
     return dir_on_drive
 
 
-def update_file(drive_file, local_file):
+def update_file(drive, parent_id, file_info, local_file):
     if not os.path.exists(local_file):
         return False
-    drive_file.SetContentFile(local_file)
-    drive_file.Upload()
+    put_file_to_id(drive, parent_id, file_info['id'], local_file)
     return True
 

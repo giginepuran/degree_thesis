@@ -25,14 +25,14 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
     print('loading lsf script ...')
     setBase = open('./script/lsf/setBase1.lsf', 'r').read()
     getData = open('./script/lsf/getData.lsf', 'r').read()
-    print('Build host start working ...\n')
-
-    mode_file = Get.get_drive_file_by_subtitle(drive, transfer_folder_id, 'mode.txt', all_folder=False)[0]
-    fsp_list = Get.get_drive_file_by_subtitle(drive, transfer_folder_id, '.fsp', all_folder=False)
-    if len(fsp_list) != population:
-        print(f'number of fsp files is wrong\nActually number : {len(fsp_list)}\nExpected : {population}')
+    print(f'Getting ids of mode_file and fsp_list ...')
+    mode_file_info = Get.get_file_info_by_subtitle(drive, transfer_folder_id, 'mode.txt', all_folder=False)[0]
+    fsp_info_list = Get.get_file_info_by_subtitle(drive, transfer_folder_id, '.fsp', all_folder=False)
+    if len(fsp_info_list) != population:
+        print(f'number of fsp files is wrong\nActually number : {len(fsp_info_list)}\nExpected : {population}')
         return
 
+    print('Build host start working ...\n')
     generation = 1
     while generation <= max_generation:
         print(f'Dealing with generation{generation}')
@@ -45,18 +45,18 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('Recording parameters ...')
 
         print('Updating *.fsp to drive transfer folder ...')
-        if not Transfer.update_fsps(fsp_list, local_transfer_folder, population):
+        if not Transfer.update_fsps(drive, transfer_folder_id, fsp_info_list, local_transfer_folder, population):
             return
 
         print('Updating mode.txt to drive transfer folder ...')
-        Transfer.change_mode_then_upload(mode_file, local_transfer_folder, 'doing_fdtd')
+        Transfer.change_mode_then_upload(drive, transfer_folder_id, mode_file_info, local_transfer_folder, 'doing_fdtd')
 
         print('Checking mode.txt ...')
-        Transfer.keep_check_mode(mode_file, local_transfer_folder, 'building_fsp', period=30)
+        Transfer.keep_check_mode(drive, mode_file_info, local_transfer_folder, 'building_fsp', period=30)
 
         print('Downloading *.fsp ...')
-        for fsp_file in fsp_list:
-            Get.download_drive_file(fsp_file, local_transfer_folder)
+        for fsp_info in fsp_info_list:
+            Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
 
         print('Collecting data from *.fsp ...')
 

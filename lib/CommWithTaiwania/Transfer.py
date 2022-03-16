@@ -7,9 +7,9 @@ import os
 import time
 
 
-def keep_check_mode(mode_file, local_transfer_folder: str, mode_msg: str, period=30):
+def keep_check_mode(drive:GoogleDrive, mode_file_info, local_transfer_folder: str, mode_msg: str, period=30):
     while True:
-        Get.download_drive_file(mode_file, dst=local_transfer_folder, move=True)
+        Get.download_drive_file(drive, mode_file_info, dst=local_transfer_folder, move=True)
         mode = open(f'{local_transfer_folder}/mode.txt','r').read()
         if mode_msg in mode:
             break
@@ -59,13 +59,13 @@ def check_qsub_finish(local_transfer_folder: str, population: int, step=60, prin
     msg = os.popen(f'rm {local_transfer_folder}/finish.txt').read()
 
 
-def update_fsps(fsp_file_list: list, local_transfer_folder: str, population: int):
+def update_fsps(drive:GoogleDrive, parent_id: str, file_info_list: list, local_transfer_folder: str, population: int):
     suc_num = 0
-    for fsp_file in fsp_file_list:
-        title = fsp_file['title']
+    for file_info in file_info_list:
+        title = file_info['title']
         if '.fsp' not in title:
             continue
-        if Put.update_file(fsp_file, f'{local_transfer_folder}/{title}'):
+        if Put.update_file(drive, parent_id, file_info, f'{local_transfer_folder}/{title}'):
             suc_num = suc_num + 1
     if suc_num != population:
         print(f'number of fsp files uploaded is wrong\nActually number : {suc_num}\nExpected : {population}')
@@ -73,6 +73,6 @@ def update_fsps(fsp_file_list: list, local_transfer_folder: str, population: int
     return True
 
 
-def change_mode_then_upload(mode_file, local_transfer_folder: str, mode_msg: str):
+def change_mode_then_upload(drive: GoogleDrive, parent_id: str, mode_file_info, local_transfer_folder: str, mode_msg: str):
     msg = os.popen(f'echo {mode_msg} > {local_transfer_folder}/mode.txt').read()
-    Put.update_file(mode_file, f'{local_transfer_folder}/mode.txt')
+    Put.update_file(drive, parent_id, mode_file_info, f'{local_transfer_folder}/mode.txt')
