@@ -79,10 +79,12 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
 def initialize_drive_transfer_folder(drive: GoogleDrive, transfer_folder_id: str, population: int):
     file_list = drive.ListFile({'q': f"'{transfer_folder_id}' in parents and trashed=false"}).GetList()
     for file in file_list:
-        file.Delete()
+        drive.CreateFile({'id': file['id']}).Delete()
     for i in range(1, population+1):
         Put.create_file_to_id(drive, transfer_folder_id, './local/ind_template.fsp',
                               change_name=True, put_name=f'ind{i}.fsp')
+    Put.create_file_to_id(drive, transfer_folder_id, './local/mode_template.txt',
+                          change_name=True, put_name='mode.txt')
 
 
 def build_saving_path():

@@ -15,8 +15,8 @@ def create_folder_to_id(drive: GoogleDrive, parent_id: str, folder_name: str):
     return folder
 
 
-def creat_file_to_id(drive: GoogleDrive, parent_id: str, local_file: str,
-                     change_name=False, put_name="file_name"):
+def create_file_to_id(drive: GoogleDrive, parent_id: str, local_file: str,
+                      change_name=False, put_name="file_name"):
     if not os.path.exists(local_file):
         return
     file_metadata = {
