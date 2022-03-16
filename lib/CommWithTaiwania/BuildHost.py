@@ -37,7 +37,6 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
     while generation <= max_generation:
         print(f'Dealing with generation{generation}')
         print('-------------------------------------')
-        print(f'Building work of generation : {generation} start!\n')
 
         print('Building fsp ...')
         build_fsps(population, local_transfer_folder)
