@@ -35,7 +35,7 @@ def taiwania_work(population: int, max_generation: int, drive: GoogleDrive,
             Get.download_drive_file(drive, fsp_info, local_transfer_folder, move=True)
 
         print('Creating job script ...')
-        Transfer.create_job_script(local_transfer_folder, 2, generation)
+        Transfer.create_job_script(local_transfer_folder, population, generation)
 
         print('Doing qsub ...')
         Transfer.qsub_fdtd_script(local_transfer_folder)
