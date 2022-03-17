@@ -44,7 +44,6 @@ import os
 import time
 
 
-# uctAFSct2mT472L
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
 gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('./local/u6097335.json', scope)
