@@ -22,7 +22,6 @@ def build_fsp(fdtd: lumapi.FDTD, lsf_script: str, save_to: str, file_name: str):
             count_f = count_f + 1
             print(f'Building failed, count = {count_f}')
             time.sleep(10)
-    fdtd = lumapi.FDTD()
     return success
 
 
@@ -41,6 +40,5 @@ def get_fom(fdtd: lumapi.FDTD, lsf_script: str, fsp_path: str):
             count_f = count_f + 1
             print(f'Getting FOM failed, count = {count_f}')
             time.sleep(10)
-    fdtd = lumapi.FDTD()
     return result
 

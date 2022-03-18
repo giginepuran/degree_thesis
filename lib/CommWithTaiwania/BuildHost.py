@@ -1,7 +1,6 @@
 import shutil
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from lib.pyDriveLib import Build
 from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
 from lib.CommWithTaiwania import Transfer
@@ -13,7 +12,7 @@ from lib.PSO import particle
 from lib.MyLumerical import PSO_Flow
 
 
-def build_work(population: int, max_generation: int, gauth: GoogleAuth, drive: GoogleDrive,
+def build_work(population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
                dimension: int, floor: list, ceiling: list, saving_path: str):
     print('PSO settings:')
@@ -48,23 +47,23 @@ def build_work(population: int, max_generation: int, gauth: GoogleAuth, drive: G
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, './script/lsf/setBase1.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, './script/lsf/setBase2.lsf',
                                           local_transfer_folder, dimension, population)
 
         print('Updating *.fsp to drive transfer folder ...')
-        Transfer.check_auth_is_expired(gauth)
+        drive = Transfer.refresh_drive_by_gauth()
         if not Transfer.update_fsps(drive, transfer_folder_id, fsp_info_list, local_transfer_folder, population):
             return
 
         print('Updating mode.txt to drive transfer folder ...')
-        Transfer.check_auth_is_expired(gauth)
+        drive = Transfer.refresh_drive_by_gauth()
         Transfer.change_mode_then_upload(drive, transfer_folder_id, mode_file_info, local_transfer_folder, 'doing_fdtd')
 
         print('Checking mode.txt ...')
-        Transfer.keep_check_mode(drive, mode_file_info, local_transfer_folder, 'building_fsp', period=30)
+        Transfer.keep_check_mode(mode_file_info, local_transfer_folder, 'building_fsp', period=30)
 
         print('Downloading *.fsp ...')
-        Transfer.check_auth_is_expired(gauth)
+        drive = Transfer.refresh_drive_by_gauth()
         for fsp_info in fsp_info_list:
             Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
 

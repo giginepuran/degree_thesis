@@ -1,21 +1,25 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
-from lib.pyDriveLib import Build
 from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
 import os
 import time
 
 
-def keep_check_mode(drive: GoogleDrive, mode_file_info, local_transfer_folder: str, mode_msg: str, period=30):
+def keep_check_mode(mode_file_info, local_transfer_folder: str, mode_msg: str, period=30):
+    drive = refresh_drive_by_gauth()
+    count = 0
     while True:
-        check_auth_is_expired(gauth)
+        if count > 3500:
+            drive = refresh_drive_by_gauth()
+            count = count - 3500
         Get.download_drive_file(drive, mode_file_info, dst=local_transfer_folder, move=True)
-        mode = open(f'{local_transfer_folder}/mode.txt','r').read()
+        mode = open(f'{local_transfer_folder}/mode.txt', 'r').read()
         if mode_msg in mode:
             break
         else:
+            count = count + period
             time.sleep(period)
 
 
@@ -81,7 +85,9 @@ def change_mode_then_upload(drive: GoogleDrive, parent_id: str, mode_file_info,
     Put.update_file(drive, parent_id, mode_file_info, f'{local_transfer_folder}/mode.txt')
 
 
-def check_auth_is_expired(gauth: GoogleAuth):
-    if gauth.access_token_expired:
-        scope = ["https://www.googleapis.com/auth/drive"]
-        gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('./local/u6097335.json', scope)
+def refresh_drive_by_gauth():
+    gauth = GoogleAuth()
+    scope = ["https://www.googleapis.com/auth/drive"]
+    gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('E:/degree_thesis/local/u6097335.json', scope)
+    return GoogleDrive(gauth)
+

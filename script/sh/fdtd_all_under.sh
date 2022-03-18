@@ -1,12 +1,12 @@
 #!/bin/bash
 #PBS -P MST107345
-#PBS -l walltime=00:10:00
-#PBS -l select=1:ncpus=40:mpiprocs=40
+#PBS -l walltime=01:00:00
+#PBS -l select=4:ncpus=40:mpiprocs=40
 #PBS -N Neff_Gen{generation}
 #PBS -j oe
 #PBS -M r09941007@g.ntu.edu.tw
 #PBS -m abe
-#PBS -q ctest
+#PBS -q ct160
 # ^PBS setting
 # job
 

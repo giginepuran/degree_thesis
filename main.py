@@ -5,18 +5,16 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
-from lib.pyDriveLib import Build
 from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
 from lib.CommWithTaiwania import Taiwania
 from lib.CommWithTaiwania import BuildHost
+from lib.CommWithTaiwania import Transfer
 import os
 import time
 
 
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
-drive = GoogleDrive(gauth)
+drive = Transfer.refresh_drive_by_gauth()
 
 transfer_folder_id = '1E057cpokP4uldG6ZdoMLrk6p4JTEwmJ9'
 # this must be a full path
@@ -26,8 +24,11 @@ saving_path = 'E:/degree_thesis/local/saving_path'
 floor = [100, 100, 100, 50, 10]
 ceiling = [300, 300, 300, 200, 90]
 dimension = 5
+population = 5
+max_generation = 50
 
-BuildHost.build_work(3, 10, drive, transfer_folder_id, local_transfer_folder, dimension, floor, ceiling, saving_path)
+BuildHost.build_work(population, max_generation, drive, transfer_folder_id,
+                     local_transfer_folder, dimension, floor, ceiling, saving_path)
 """
 
 # taiwania local main template
@@ -40,17 +41,15 @@ from lib.pyDriveLib import Get
 from lib.pyDriveLib import Put
 from lib.CommWithTaiwania import Transfer
 from lib.CommWithTaiwania import Taiwania
+from google.oauth2 import service_account
 import os
 import time
 
 
-gauth = GoogleAuth()
-scope = ["https://www.googleapis.com/auth/drive"]
-gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('./local/u6097335.json', scope)
-drive = GoogleDrive(gauth)
+drive = Transfer.refresh_drive_by_gauth()
 
 transfer_folder_id = '1E057cpokP4uldG6ZdoMLrk6p4JTEwmJ9'
 local_transfer_folder = '/home/u6097335/degree_thesis/local/transfer'
 
-Taiwania.taiwania_work(3, 10, drive, transfer_folder_id, local_transfer_folder)
+Taiwania.taiwania_work(5, 50, drive, transfer_folder_id, local_transfer_folder)
 """
