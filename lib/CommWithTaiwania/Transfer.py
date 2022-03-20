@@ -11,9 +11,9 @@ def keep_check_mode(mode_file_info, local_transfer_folder: str, mode_msg: str, p
     drive = refresh_drive_by_gauth()
     count = 0
     while True:
-        if count > 3500:
+        if count > 900:
             drive = refresh_drive_by_gauth()
-            count = count - 3500
+            count = count - 900
         Get.download_drive_file(drive, mode_file_info, dst=local_transfer_folder, move=True)
         mode = open(f'{local_transfer_folder}/mode.txt', 'r').read()
         if mode_msg in mode:

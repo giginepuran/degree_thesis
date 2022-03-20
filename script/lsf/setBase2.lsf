@@ -6,7 +6,7 @@
 switchtolayout;
 deleteall;
 # 1:for python, 2:for lumerical
-mode = 2;
+mode = 1;
 if (mode == 1)
 {
     l1 = para1__*1e-9;
