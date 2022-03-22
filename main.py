@@ -53,3 +53,41 @@ local_transfer_folder = '/home/u6097335/degree_thesis/local/transfer'
 
 Taiwania.taiwania_work(5, 50, drive, transfer_folder_id, local_transfer_folder)
 """
+
+""" build host local_main_interpolation.py
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from oauth2client.service_account import ServiceAccountCredentials
+from lib.pyDriveLib import Get
+from lib.pyDriveLib import Put
+from lib.CommWithTaiwania import Taiwania
+from lib.CommWithTaiwania import BuildHost
+from lib.CommWithTaiwania import Transfer
+import os
+import time
+
+
+drive = Transfer.refresh_drive_by_gauth()
+
+transfer_folder_id = '1E057cpokP4uldG6ZdoMLrk6p4JTEwmJ9'
+# this must be a full path
+local_transfer_folder = 'E:/degree_thesis/local/transfer'
+saving_path = 'E:/degree_thesis_result/saving_path'
+
+floor = [100, 100, 100, 100, 100,
+         100, 100, 100, 100, 100,
+         100, 100, 100, 100, 100,
+         50,  50,  50,  50,  50,
+         10,  10,  10,  10,  10]
+ceiling = [300, 300, 300, 300, 300,
+           300, 300, 300, 300, 300,
+           300, 300, 300, 300, 300,
+           200, 200, 200, 200, 200,
+           90,  90,  90,  90,  90]
+dimension = 25
+population = 20
+max_generation = 50
+
+BuildHost.build_work_interpolation(population, max_generation, drive, transfer_folder_id,
+                                   local_transfer_folder, dimension, floor, ceiling, saving_path)
+"""

@@ -127,9 +127,8 @@ def build_work_interpolation(population: int, max_generation: int, drive: Google
     print('-------------------------------------')
 
     print('initializing saving path ...')
-    PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population)
-    #if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
-    #    return
+    if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
+        return
 
     print('opening fdtd gui ...')
     fdtd = lumapi.FDTD(hide=False)
@@ -151,7 +150,7 @@ def build_work_interpolation(population: int, max_generation: int, drive: Google
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/setBase3.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, './script/lsf/setBase3.lsf',
                                                         local_transfer_folder, dimension, population, 5)
 
         print('Updating *.fsp to drive transfer folder ...')
