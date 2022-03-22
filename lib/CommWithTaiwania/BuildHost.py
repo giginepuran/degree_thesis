@@ -47,7 +47,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, './script/lsf/setBase2.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/setBase2.lsf',
                                           local_transfer_folder, dimension, population)
 
         print('Updating *.fsp to drive transfer folder ...')
