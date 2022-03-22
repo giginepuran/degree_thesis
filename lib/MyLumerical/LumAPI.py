@@ -13,10 +13,10 @@ def build_fsp(fdtd: lumapi.FDTD, lsf_script: str, save_to: str, file_name: str):
         return False
     success = False
     count_f = 0
+    lsf_script = lsf_script.replace('__save_to__', f'{save_to}/{file_name}')
     while not success:
         try:
             fdtd.eval(lsf_script)
-            fdtd.save(f'{save_to}/{file_name}')
             success = True
         except:
             count_f = count_f + 1

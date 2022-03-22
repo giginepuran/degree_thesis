@@ -71,6 +71,7 @@ if (mode == 1)
 unit = (l1+l2+l3+l4);
 scale = sum(unit);
 height = 220e-9;
+N = 20;
 
 # platform-------------------------------------------
 # BOX
@@ -138,6 +139,86 @@ set("override mesh order from material database",1);
 set("mesh order",2);
 
 
+# solver-----------------------------------------
+addfdtd;
+set("dimension", 2);  #  1 = 2D, 2 = 3D
+set("x min", -2e-6);
+set("x max", scale + 2e-6);
+set("y min", -2e-6);
+set("y max", scale + 2e-6);
+set("z min", -1e-6);
+set("z max", height+1e-6);
+
+# monitor ----------------------------------------
+# wg1(+y)
+addpower;
+set("name","P_wg1");
+set("monitor type","2D Y-normal");
+set("x min", 0-1e-6);
+set("x max", scale+1e-6);
+set("y", scale + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# wg2(+x)
+addpower;
+set("name","P_wg2");
+set("monitor type","2D X-normal");
+set("x", scale + 1e-6);
+set("y min", 0-1e-6);
+set("y max", scale + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# reflection monitor
+addpower;
+set("name","reflection");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", height+0.6e-6);
+
+# central top view
+addpower;
+set("name","top_view");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", height/2);
+
+# transmission monitor
+addpower;
+set("name","trasmission");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", -0.6e-6);
+
+# source-------------------------------------------
+addgaussian;
+set("injection axis","z");
+set("direction","Backward");
+set("x", scale/2);
+set("x span",10e-6);
+set("y", scale/2);
+set("y span",10e-6);
+set("z", height+0.5e-6);
+set("angle phi", 45);
+set("angle theta", 0);
+set("polarization angle", 45);
+set("use scalar approximation",1);
+set("waist radius w0", 4.6e-6/(20/N));
+set("center wavelength", 1.31e-6);
+set("wavelength span", 0);
+set("distance from waist", 0);
+
+# grating-------------------------------------------
 # pattern:
 # 2100
 # 2120
@@ -151,12 +232,14 @@ for (i = 1:1:19)
 }
 
 
-addgroup;
+#addgroup;
+addstructuregroup;
 set("name","grating_unit_1_1");
 set("x", 0);
 set("y", 0);
 
-addgroup;
+#addgroup;
+addstructuregroup;
 set("name","grating_column_1");
 set("x", 0);
 set("y", 0);
@@ -302,91 +385,10 @@ for (i = 2:1:N)
         set("x min", xy(i)+l1(i)+l2(i)+l3(i)+l4(i)*F(i)/100);
         set("x max", xy(i)+unit(i));
     }
-
-    
 }
 
-
-
-
-# solver-----------------------------------------
-addfdtd;
-set("dimension", 2);  #  1 = 2D, 2 = 3D
-set("x min", -2e-6);
-set("x max", scale + 2e-6);
-set("y min", -2e-6);
-set("y max", scale + 2e-6);
-set("z min", -1e-6);
-set("z max", height+1e-6);
-
-# monitor ----------------------------------------
-# wg1(+y)
-addpower;
-set("name","P_wg1");
-set("monitor type","2D Y-normal");
-set("x min", 0-1e-6);
-set("x max", scale+1e-6);
-set("y", scale + 1e-6);
-set("z", height/2);
-set("z span", 0.5e-6);
-
-# wg2(+x)
-addpower;
-set("name","P_wg2");
-set("monitor type","2D X-normal");
-set("x", scale + 1e-6);
-set("y min", 0-1e-6);
-set("y max", scale + 1e-6);
-set("z", height/2);
-set("z span", 0.5e-6);
-
-# reflection monitor
-addpower;
-set("name","reflection");
-set("monitor type","2D Z-normal");
-set("x min", -2e-6);
-set("x max", scale+2e-6);
-set("y min", -2e-6);
-set("y max", scale+2e-6);
-set("z", height+0.6e-6);
-
-# central top view
-addpower;
-set("name","top_view");
-set("monitor type","2D Z-normal");
-set("x min", -2e-6);
-set("x max", scale+2e-6);
-set("y min", -2e-6);
-set("y max", scale+2e-6);
-set("z", height/2);
-
-# transmission monitor
-addpower;
-set("name","trasmission");
-set("monitor type","2D Z-normal");
-set("x min", -2e-6);
-set("x max", scale+2e-6);
-set("y min", -2e-6);
-set("y max", scale+2e-6);
-set("z", -0.6e-6);
-
-# source-------------------------------------------
-addgaussian;
-set("injection axis","z");
-set("direction","Backward");
-set("x", scale/2);
-set("x span",10e-6);
-set("y", scale/2);
-set("y span",10e-6);
-set("z", height+0.5e-6);
-set("angle phi", 45);
-set("angle theta", 0);
-set("polarization angle", 45);
-set("use scalar approximation",1);
-set("waist radius w0", 4.6e-6/(20/N));
-set("center wavelength", 1.31e-6);
-set("wavelength span", 0);
-set("distance from waist", 0);
-
-
-
+if (mode == 1)
+{
+    save('__save_to__');
+    deleteall;
+}

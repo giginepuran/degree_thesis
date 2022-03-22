@@ -4,6 +4,8 @@ import sys
 import lumapi
 from past.builtins import execfile
 import time
+import numpy as np
+from scipy.interpolate import interp1d
 from os.path import exists
 from lib.PSO import swarm
 from lib.MyLumerical import LumAPI
@@ -32,7 +34,7 @@ def step3_build_fsp_by_swarm(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf
         para = my_swarm.particles[p-1].get_x()
         build_script = open(f'{build_lsf}', 'r').read()
         for i in range(1, dimension + 1, 1):
-            build_script = build_script.replace(f'para{i}__', f'{para[i - 1][0]}')
+            build_script = build_script.replace(f'para{i}__', f'{round(para[i - 1][0], 2)}')
         if not LumAPI.build_fsp(fdtd, build_script, local_transfer_folder, f'ind{p}.fsp'):
             return -1
     return 0
@@ -84,4 +86,38 @@ def step9_select_gbest_from_pbest(saving_path: str, pbest_p_no, generation: int,
 
 def step10_inherit_pbest_to_next_generation(saving_path: str, current_generation, population, dimension):
     ArrangeFile.inherit_pbest_to_next_generation(saving_path, current_generation, population, dimension)
+
+
+def interpolation_by_swarm(particle_x: np.ndarray, dimension: int, parameter_num: int,
+                           interpol_point_num: int, interpol_start: int, interpol_end: int):
+    after_interpolation = []
+    num_of_point_in_a_set = dimension // parameter_num
+    for para_no in range(1, parameter_num+1):
+        x = np.linspace(interpol_start, interpol_end, num=num_of_point_in_a_set, endpoint=True)
+        y = particle_x[(para_no-1)*parameter_num:para_no*parameter_num]
+        f = interp1d(x, y.reshape(parameter_num,), kind='cubic')
+        x_new = np.linspace(interpol_start, interpol_end, num=interpol_point_num, endpoint=True)
+        after_interpolation.append(f(x_new))
+    return after_interpolation
+
+
+def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf: str,
+                                           local_transfer_folder: str, dimension: int, population: int,
+                                           parameter_num: int):
+    if not os.path.isdir(local_transfer_folder):
+        return -1
+    if not os.path.exists(build_lsf):
+        return -1
+    for p in range(1, population+1):
+        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 20, 1, 20)
+        build_script = open(f'{build_lsf}', 'r').read()
+        for para_no in range(1, parameter_num+1):
+            set_of_para = parameters[para_no-1]
+            for para_no_no in range(1, 20+1):
+                build_script = build_script.replace(f'para{para_no}__{para_no_no}',
+                                                    f'{round(set_of_para[para_no_no - 1], 2)}')
+        if not LumAPI.build_fsp(fdtd, build_script, local_transfer_folder, f'ind{p}.fsp'):
+            return -1
+    return 0
+
 
