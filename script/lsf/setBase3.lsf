@@ -5,10 +5,11 @@
 # 2222
 # This script is for apodize grating coupler
 # Build GC by group is faster than build each grating
+newproject;
 switchtolayout;
 deleteall;
 # 1:for python, 2:for lumerical
-mode = 2;
+mode = 1;
 if (mode == 1)
 {
     l1 = [para1__1, para1__2, para1__3, para1__4, para1__5,
@@ -218,6 +219,7 @@ set("center wavelength", 1.31e-6);
 set("wavelength span", 0);
 set("distance from waist", 0);
 
+
 # grating-------------------------------------------
 # pattern:
 # 2100
@@ -391,4 +393,5 @@ if (mode == 1)
 {
     save('__save_to__');
     deleteall;
+    newproject;
 }

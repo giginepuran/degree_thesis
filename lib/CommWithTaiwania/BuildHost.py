@@ -68,7 +68,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
             Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
 
         print('Collecting data from *.fsp ...')
-        fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, './script/lsf/getData.lsf',
+        fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, 'E:/degree_thesis/script/lsf/getData.lsf',
                                                       population, local_transfer_folder)
 
         print('Updating fom of each particle to swarm ...')
@@ -127,8 +127,8 @@ def build_work_interpolation(population: int, max_generation: int, drive: Google
     print('-------------------------------------')
 
     print('initializing saving path ...')
-    if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
-        return
+    #if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
+    #    return
 
     print('opening fdtd gui ...')
     fdtd = lumapi.FDTD(hide=False)
@@ -150,7 +150,7 @@ def build_work_interpolation(population: int, max_generation: int, drive: Google
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, './script/lsf/setBase3.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/setBase3.lsf',
                                                         local_transfer_folder, dimension, population, 5)
 
         print('Updating *.fsp to drive transfer folder ...')

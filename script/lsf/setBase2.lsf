@@ -5,6 +5,7 @@
 # 2222
 # This script is for uniform grating coupler
 # Build GC by group is faster than build each grating
+newproject;
 switchtolayout;
 deleteall;
 # 1:for python, 2:for lumerical

@@ -6,3 +6,4 @@
 *.txt
 local_main.py
 local_main_interpolation.py
+lsf_runner.py

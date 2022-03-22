@@ -1,6 +1,9 @@
 import os
 import shutil
 import sys
+
+import past.builtins
+
 import lumapi
 from past.builtins import execfile
 import time
@@ -35,8 +38,11 @@ def step3_build_fsp_by_swarm(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf
         build_script = open(f'{build_lsf}', 'r').read()
         for i in range(1, dimension + 1, 1):
             build_script = build_script.replace(f'para{i}__', f'{round(para[i - 1][0], 2)}')
-        if not LumAPI.build_fsp(fdtd, build_script, local_transfer_folder, f'ind{p}.fsp'):
-            return -1
+        build_script = build_script.replace('__save_to__', f'{local_transfer_folder}/ind{p}.fsp')
+        LumAPI.build_fsp(fdtd, build_script)
+        # after building, fdtd need time to release resource.
+        # Otherwise, it will build very very slow...
+        time.sleep(10)
     return 0
 
 
@@ -116,8 +122,10 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
             for para_no_no in range(1, 20+1):
                 build_script = build_script.replace(f'para{para_no}__{para_no_no}',
                                                     f'{round(set_of_para[para_no_no - 1], 2)}')
-        if not LumAPI.build_fsp(fdtd, build_script, local_transfer_folder, f'ind{p}.fsp'):
-            return -1
-    return 0
+        build_script = build_script.replace('__save_to__', f'{local_transfer_folder}/ind{p}.fsp')
+        LumAPI.build_fsp(fdtd, build_script)
+        # after building, fdtd need time to release resource.
+        # Otherwise, it will build very very slow...
+        time.sleep(10)
 
 
