@@ -129,3 +129,10 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
         time.sleep(10)
 
 
+def step11_remove_some_fsp(saving_path: str, generation: int, population: int):
+    gen_path = f'{saving_path}/Gen{generation}'
+    for p in range(1, population+1):
+        os.remove(f'{gen_path}/p{p}/ind{p}.fsp')
+        os.remove(f'{gen_path}/p{p}/pbest/ind{p}.fsp')
+
+

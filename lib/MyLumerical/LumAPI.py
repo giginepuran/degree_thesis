@@ -29,12 +29,13 @@ def get_fom(fdtd: lumapi.FDTD, lsf_script: str, fsp_path: str):
     count_f = 0
     while not success:
         try:
-            fdtd.eval('new;')
+            fdtd.eval('newproject;')
             fdtd.load(fsp_path)
             fdtd.eval(lsf_script)
             result = fdtd.getv('FOM')
+            fdtd.eval('newproject;')
+            time.sleep(5)
             success = True
-            fdtd.eval('new;')
         except:
             count_f = count_f + 1
             print(f'Getting FOM failed, count = {count_f}')
