@@ -1,5 +1,6 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+from lib.CommWithTaiwania import Transfer
 import shutil
 import os
 
@@ -37,11 +38,19 @@ def put_file_to_id(drive: GoogleDrive, parent_id: str, drive_file_id: str, local
         'parents': [{'id': parent_id}],
         'id': drive_file_id
     }
-    file = drive.CreateFile(file_metadata)
-    file.SetContentFile(local_file)
-    original_filename = local_file[local_file.rfind('/')+1:]
-    file['title'] = put_name if change_name else original_filename
-    file.Upload()
+    suc = False
+    while not suc:
+        try:
+            file = drive.CreateFile(file_metadata)
+            file.SetContentFile(local_file)
+            original_filename = local_file[local_file.rfind('/')+1:]
+            file['title'] = put_name if change_name else original_filename
+            file.Upload()
+            suc = True
+        except:
+            print(f"update to {id} failed.")
+            drive = Transfer.refresh_drive_by_gauth()
+
 
 
 # Compare to put_entire_dir_to_id, this function only put files,

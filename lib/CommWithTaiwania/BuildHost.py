@@ -47,7 +47,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/setBase2.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/pattern1/uniform.lsf',
                                           local_transfer_folder, dimension, population)
 
         print('Updating *.fsp to drive transfer folder ...')
@@ -90,6 +90,9 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('Putting pbest to next generation ...')
         if generation != max_generation:
             PSO_Flow.step10_inherit_pbest_to_next_generation(saving_path, generation, population, dimension)
+
+        print('Removing excess fsp')
+        PSO_Flow.step11_remove_some_fsp(saving_path, generation, population)
 
         print('Particles evolving ...')
         my_swarm.evolution()

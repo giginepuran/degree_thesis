@@ -122,8 +122,9 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
             for para_no_no in range(1, 20+1):
                 build_script = build_script.replace(f'para{para_no}__{para_no_no}',
                                                     f'{round(set_of_para[para_no_no - 1], 2)}')
-        build_script = build_script.replace('__save_to__', f'{local_transfer_folder}/ind{p}.fsp')
         LumAPI.build_fsp(fdtd, build_script)
+        fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
+        fdtd.eval("newproject;")
         # after building, fdtd need time to release resource.
         # Otherwise, it will build very very slow...
         time.sleep(10)

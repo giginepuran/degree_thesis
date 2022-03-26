@@ -73,6 +73,8 @@ def update_fsps(drive: GoogleDrive, parent_id: str, file_info_list: list, local_
             continue
         if Put.update_file(drive, parent_id, file_info, f'{local_transfer_folder}/{title}'):
             suc_num = suc_num + 1
+        if suc_num % 31 == 30:
+            drive = refresh_drive_by_gauth()
     if suc_num != population:
         print(f'number of fsp files uploaded is wrong\nActually number : {suc_num}\nExpected : {population}')
         return False

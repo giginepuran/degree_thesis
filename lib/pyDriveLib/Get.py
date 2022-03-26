@@ -1,5 +1,6 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+from lib.CommWithTaiwania import Transfer
 import shutil
 import os
 
@@ -16,9 +17,17 @@ def get_file_info_by_subtitle(drive: GoogleDrive, parent_id: str, subtitle: str,
 
 
 def download_drive_file(drive: GoogleDrive, file_info, dst="", move=False):
-    file = drive.CreateFile({'id': file_info['id']})
-    file.GetContentFile(file['title'])
-    if move and os.path.isdir(dst):
-        shutil.move(f"./{file['title']}", f"{dst}/{file['title']}")
+    suc = False
+    while not suc:
+        try:
+            file = drive.CreateFile({'id': file_info['id']})
+            file.GetContentFile(file['title'])
+            if move and os.path.isdir(dst):
+                shutil.move(f"./{file['title']}", f"{dst}/{file['title']}")
+            suc = True
+        except:
+            print(f"download {file_info['title']} failed.")
+            drive = Transfer.refresh_drive_by_gauth()
+
 
 
