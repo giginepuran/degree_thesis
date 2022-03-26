@@ -23,48 +23,6 @@ def keep_check_mode(mode_file_info, local_transfer_folder: str, mode_msg: str, p
             time.sleep(period)
 
 
-def create_job_script(local_transfer_folder: str, population: int, generation: int):
-    if not (os.path.isdir(local_transfer_folder) and os.path.exists(f'./script/sh/fdtd_all_under.sh')):
-        print('./script/sh/fdtd_all_under.sh not exists')
-        return
-    with open(f'{local_transfer_folder}/qsub_script.sh', "w") as txt:
-        script = open('./script/sh/fdtd_all_under.sh', 'r').read()
-        script = script.replace('{population}', f'{population}')
-        script = script.replace('{generation}', f'{generation}')
-        script = script.replace('{transfer_folder}', f'{local_transfer_folder}')
-        txt.write(script)
-
-
-def qsub_fdtd_script(local_transfer_folder: str):
-    qsub_success = False
-    while not qsub_success:
-        job_id = os.popen(f'qsub {local_transfer_folder}/qsub_script.sh').read()
-        if ".srvc1" in job_id:
-            print(f"job id : {job_id}")
-            qsub_success = True
-        else:
-            print(f"qsub failed\nError message:{job_id}")
-            time.sleep(5)
-
-
-def check_qsub_finish(local_transfer_folder: str, population: int, step=60, print_step_msg=False):
-    last_time = 0
-    finish = False
-    count = 0
-    while not finish:
-        if os.path.exists(f'{local_transfer_folder}/finish.txt'):
-            finish = True
-        else:
-            time.sleep(5 * population)
-            last_time = last_time + population * 5
-            if print_step_msg and last_time // step > count:
-                count = last_time // step
-                print(f'qsub is not finished yet, last time : {last_time}')
-    print(f'fdtd job finished, last time : {last_time}')
-    msg = os.popen(f'rm {local_transfer_folder}/qsub_script.sh').read()
-    msg = os.popen(f'rm {local_transfer_folder}/finish.txt').read()
-
-
 def update_fsps(drive: GoogleDrive, parent_id: str, file_info_list: list, local_transfer_folder: str, population: int):
     suc_num = 0
     for file_info in file_info_list:
