@@ -40,12 +40,12 @@ def copy_particle_to_pbest_overwrite(saving_path: str, generation: int, p_no: in
 
 def inherit_pbest_to_next_generation(saving_path: str, current_generation: int, population: int, dimension: int):
     for p_no in range(1, population+1):
-        shutil.copy(f'{saving_path}/Gen{current_generation}/p{p_no}/ind{p_no}.fsp',
+        shutil.copy(f'{saving_path}/Gen{current_generation}/p{p_no}/pbest/ind{p_no}.fsp',
                     f'{saving_path}/Gen{current_generation+1}/p{p_no}/pbest/ind{p_no}.fsp')
-        shutil.copy(f'{saving_path}/Gen{current_generation}/p{p_no}/fom.txt',
+        shutil.copy(f'{saving_path}/Gen{current_generation}/p{p_no}/pbest/fom.txt',
                     f'{saving_path}/Gen{current_generation+1}/p{p_no}/pbest/fom.txt')
         for d in range(1, dimension + 1):
-            shutil.copy(f'{saving_path}/Gen{current_generation}/p{p_no}/para{d}.txt',
+            shutil.copy(f'{saving_path}/Gen{current_generation}/p{p_no}/pbest/para{d}.txt',
                         f'{saving_path}/Gen{current_generation+1}/p{p_no}/pbest/para{d}.txt')
 
 
