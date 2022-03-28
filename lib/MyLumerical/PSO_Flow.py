@@ -38,12 +38,12 @@ def step3_build_fsp_by_swarm(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf
         build_script = open(f'{build_lsf}', 'r').read()
         for i in range(1, dimension + 1, 1):
             build_script = build_script.replace(f'para{i}__', f'{round(para[i - 1][0], 2)}')
-        build_script = build_script.replace('__save_to__', f'{local_transfer_folder}/ind{p}.fsp')
         LumAPI.build_fsp(fdtd, build_script)
+        fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
+        fdtd.eval("newproject;")
         # after building, fdtd need time to release resource.
         # Otherwise, it will build very very slow...
         time.sleep(10)
-    return 0
 
 
 # between step 3 and step 4, we need to
