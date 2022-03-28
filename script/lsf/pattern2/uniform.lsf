@@ -1,0 +1,360 @@
+# pattern: uniform grating polygon version fastest
+# 2sss
+# 210s
+# 211s
+# 2222
+# This script is for apodize grating coupler
+# Build GC by group is faster than build each grating
+newproject;
+switchtolayout;
+deleteall;
+# 1:for python, 2:for lumerical
+mode = 1;
+if (mode == 1)
+{
+    l1 = para1__*1e-9;
+
+    l2 = para2__*1e-9;
+
+    l3 = para3__*1e-9;
+
+    l4 = para4__*1e-9;
+    
+    l5 = para5__*1e-9;
+    
+    deep    = 220*1e-9;
+    shallow = 70*1e-9;
+} else if (mode == 2)
+{
+    l1 = 250*1e-9;
+
+    l2 = 250*1e-9;
+
+    l3 = 250*1e-9;
+
+    l4 = 250*1e-9;
+    
+    l5 = 250*1e-9;
+          
+    deep    = 220*1e-9;
+    shallow = 70*1e-9;
+}
+unit = (l1+l2+l3+l4+l5);
+height = 220e-9;
+N = 20;
+scale = unit*N;
+# groups---------------------------------------------
+addgroup;
+set("name","DO_NOT_OPEN");
+
+addstructuregroup;
+set("name","other");
+
+addanalysisgroup;
+set("name","monitor");
+
+addstructuregroup;
+set("name","grating");
+
+# solver-----------------------------------------
+addfdtd;
+set("dimension", 2);  #  1 = 2D, 2 = 3D
+set("x min", -2e-6);
+set("x max", scale + 2e-6);
+set("y min", -2e-6);
+set("y max", scale + 2e-6);
+set("z min", -1e-6);
+set("z max", height+1e-6);
+
+# source-------------------------------------------
+addgaussian;
+set("injection axis","z");
+set("direction","Backward");
+set("x", scale/2);
+set("x span",10e-6);
+set("y", scale/2);
+set("y span",10e-6);
+set("z", height+0.5e-6);
+set("angle phi", 45);
+set("angle theta", 0);
+set("polarization angle", 45);
+set("use scalar approximation",1);
+set("waist radius w0", 4.6e-6/(20/N));
+set("center wavelength", 1.31e-6);
+set("wavelength span", 0);
+set("distance from waist", 0);
+
+
+# platform-------------------------------------------
+groupscope("::model::other");
+# BOX
+addrect;
+set("name","BOX");
+set("x min", -5e-6);
+set("x max", scale + 10e-6);
+set("y min", -5e-6);
+set("y max", scale + 10e-6);
+set("z min", -2e-6);
+set("z max", 0);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",3);
+
+# overcladding
+addrect;
+set("name","overcladding");
+set("x min", -5e-6);
+set("x max", scale + 10e-6);
+set("y min", -5e-6);
+set("y max", scale + 10e-6);
+set("z min", height);
+set("z max", height+2e-6);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",3);
+
+# sidecladding
+addrect;
+set("name","sidecladding");
+set("x min", -5e-6);
+set("x max", scale + 10e-6);
+set("y min", -5e-6);
+set("y max", scale + 10e-6);
+set("z min", 0);
+set("z max", height);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",5);
+
+# waveguides
+addrect;
+set("name","wg1");
+set("x min", 0);
+set("x max", scale);
+set("y min", scale);
+set("y max", scale+7e-6);
+set("z min", 0);
+set("z max", height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+addrect;
+set("name","wg2");
+set("x min", scale);
+set("x max", scale+7e-6);
+set("y min", 0);
+set("y max", scale);
+set("z min", 0);
+set("z max", height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+select("::model::other");
+
+# monitor ----------------------------------------
+groupscope("::model::monitor");
+# wg1(+y)
+addpower;
+set("name","P_wg1");
+set("monitor type","2D Y-normal");
+set("x min", 0-1e-6);
+set("x max", scale+1e-6);
+set("y", scale + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# wg2(+x)
+addpower;
+set("name","P_wg2");
+set("monitor type","2D X-normal");
+set("x", scale + 1e-6);
+set("y min", 0-1e-6);
+set("y max", scale + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# reflection monitor
+addpower;
+set("name","reflection");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", height+0.6e-6);
+
+# central top view
+addpower;
+set("name","top_view");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", height/2);
+
+# transmission monitor
+addpower;
+set("name","trasmission");
+set("monitor type","2D Z-normal");
+set("x min", -2e-6);
+set("x max", scale+2e-6);
+set("y min", -2e-6);
+set("y max", scale+2e-6);
+set("z", -0.6e-6);
+
+
+groupscope("::model");
+#-------grating template-----------------------
+xy = 0:unit:unit*(N-1);
+
+
+#---------------
+row_structs = cell(N);
+col_structs = cell(N);
+
+for (i = 1:1:N)
+{
+    # create struct
+    para = struct;
+    para.shallow = struct;
+    para.deep = struct;
+    para.sub1 = struct;
+    para.sub2 = struct;
+    
+    # change to row para
+    para.shallow = {"ymin":xy(i)+l1 , "ymax":xy(i)+l1+l2+l3};
+    para.deep = {"ymin":xy(i)+l1+l2 , "ymax":xy(i)+l1+l2+l3};
+    para.sub1 = {"ymin":xy(i)+l1 , "ymax":xy(i)+unit};
+    para.sub2 = {"ymin":xy(i)+l1+l2+l3+l4 , "ymax":xy(i)+unit};
+    row_structs{i} = para;    
+    
+    # change to col para
+    para.shallow = {"xmin":xy(i)+l1 , "xmax":xy(i)+l1+l2+l3};
+    para.deep = {"xmin":xy(i)+l1+l2 , "xmax":xy(i)+l1+l2+l3};
+    para.sub1 = {"xmin":xy(i)+l1+l2+l3+l4 , "xmax":xy(i)+unit};
+    para.sub2 = {"xmin":xy(i)+l1 , "xmax":xy(i)+unit};
+    col_structs{i} = para;
+}
+
+
+
+
+
+addstructuregroup;
+set("name","template");
+
+# silicon for all
+addrect;
+set("name","silicon");
+set("x min", 0);
+set("x max", scale);
+set("y min", 0);
+set("y max", scale);
+set("z min", 0);
+set("z max", height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",4);
+addtogroup("DO_NOT_OPEN");
+
+i = 1;
+j = 1;
+groupscope("::model::template");
+# shallow etching
+vtx = [col_structs{j}.shallow.xmin,row_structs{i}.shallow.ymin;
+       col_structs{j}.shallow.xmax,row_structs{i}.shallow.ymin;
+       col_structs{j}.shallow.xmax,row_structs{i}.shallow.ymax;
+       col_structs{j}.shallow.xmin,row_structs{i}.shallow.ymax];
+addpoly;
+set("name","shallow");
+set("vertices",vtx);
+set("z min",110e-9);
+set("z max",220e-9);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",3);
+# deep etching
+vtx = [col_structs{j}.deep.xmin,row_structs{i}.deep.ymin;
+       col_structs{j}.deep.xmax,row_structs{i}.deep.ymin;
+       col_structs{j}.deep.xmax,row_structs{i}.deep.ymax;
+       col_structs{j}.deep.xmin,row_structs{i}.deep.ymax];
+addpoly;
+set("name","deep");
+set("vertices",vtx);
+set("z min",0);
+set("z max",110e-9);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+# deep etching subwavelength
+vtx = [col_structs{j}.sub2.xmin,row_structs{i}.sub2.ymin;
+       col_structs{j}.sub2.xmin,row_structs{i}.sub2.ymax;
+       col_structs{j}.sub2.xmax,row_structs{i}.sub2.ymax;
+       col_structs{j}.sub2.xmax,row_structs{i}.sub1.ymin;
+       col_structs{j}.sub1.xmin,row_structs{i}.sub1.ymin;
+       col_structs{j}.sub1.xmin,row_structs{i}.sub2.ymin];
+addpoly;
+set("name","sub");
+set("vertices",vtx);
+set("z min",0);
+set("z max",220e-9);
+set("material","SiO2 (Glass) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+
+#breakpoint;
+points = struct;
+#----------build tot grating
+for (i = 1:1:N)
+{
+    groupscope("::model");
+    row_name = "row"+num2str(i);
+    addstructuregroup;
+    set("name",row_name);
+    
+    for (j = 1:1:N)
+    {
+        col_name = "col"+num2str(j);
+        # copy grating unit group
+        select("::model::template");
+        copy;
+        unit_name = "unit_"+row_name+col_name;
+        set("name",unit_name);
+        groupscope("::model::"+unit_name);
+        points.vtx = {"vertices":[col_structs{j}.shallow.xmin,row_structs{i}.shallow.ymin;
+                                  col_structs{j}.shallow.xmax,row_structs{i}.shallow.ymin;
+                                  col_structs{j}.shallow.xmax,row_structs{i}.shallow.ymax;
+                                  col_structs{j}.shallow.xmin,row_structs{i}.shallow.ymax]};
+        setnamed("shallow", points.vtx);
+        points.vtx = {"vertices":[col_structs{j}.deep.xmin,row_structs{i}.deep.ymin;
+                                  col_structs{j}.deep.xmax,row_structs{i}.deep.ymin;
+                                  col_structs{j}.deep.xmax,row_structs{i}.deep.ymax;
+                                  col_structs{j}.deep.xmin,row_structs{i}.deep.ymax]};
+        setnamed("deep", points.vtx);
+        points.vtx = {"vertices":[col_structs{j}.sub2.xmin,row_structs{i}.sub2.ymin;
+                                  col_structs{j}.sub2.xmin,row_structs{i}.sub2.ymax;
+                                  col_structs{j}.sub2.xmax,row_structs{i}.sub2.ymax;
+                                  col_structs{j}.sub2.xmax,row_structs{i}.sub1.ymin;
+                                  col_structs{j}.sub1.xmin,row_structs{i}.sub1.ymin;
+                                  col_structs{j}.sub1.xmin,row_structs{i}.sub2.ymin]};
+        setnamed("sub", points.vtx);
+        # group distribution to optimize the designer performance
+        select("::model::"+unit_name);
+        addtogroup("::model::"+row_name);
+    }
+    groupscope("::model");
+    
+    # group distribution to optimize the designer performance
+            
+    select(row_name);
+    addtogroup("::model::grating");
+}
+
+select("::model::grating");
+addtogroup("::model::DO_NOT_OPEN");
+select("::model::template");
+delete;
