@@ -71,7 +71,5 @@ class Particle:
     def get_fom(self):
         return self._FOM
 
-    def discrete(self, para_no: int, precisions):
-        self._x[para_no-1][0] = round(self._x[para_no-1][0] / precisions, 0) * precisions
 
 

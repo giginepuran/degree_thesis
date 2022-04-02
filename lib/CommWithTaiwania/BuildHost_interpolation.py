@@ -14,7 +14,7 @@ from lib.MyLumerical import PSO_Flow
 
 def build_work(population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
-               dimension: int, floor: list, ceiling: list, saving_path: str):
+               dimension: int, parameter_num: int, floor: list, ceiling: list, saving_path: str):
     print('PSO settings:')
     print(f'local transfer folder : {local_transfer_folder}')
     print(f'          saving path : {saving_path}')
@@ -24,8 +24,8 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
     print('-------------------------------------')
 
     print('initializing saving path ...')
-    if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
-        return
+    #if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
+    #    return
 
     print('opening fdtd gui ...')
     fdtd = lumapi.FDTD(hide=False)
@@ -47,8 +47,8 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/pattern1/apodize.lsf',
-                                                        local_transfer_folder, dimension, population, 5)
+        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/pattern3/apodize.lsf',
+                                                        local_transfer_folder, dimension, population, parameter_num)
 
         print('Updating *.fsp to drive transfer folder ...')
         drive = Transfer.refresh_drive_by_gauth()

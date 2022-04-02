@@ -100,8 +100,8 @@ def interpolation_by_swarm(particle_x: np.ndarray, dimension: int, parameter_num
     num_of_point_in_a_set = dimension // parameter_num
     for para_no in range(1, parameter_num+1):
         x = np.linspace(interpol_start, interpol_end, num=num_of_point_in_a_set, endpoint=True)
-        y = particle_x[(para_no-1)*parameter_num:para_no*parameter_num]
-        f = interp1d(x, y.reshape(parameter_num,), kind='cubic')
+        y = particle_x[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
+        f = interp1d(x, y.reshape(num_of_point_in_a_set,), kind='cubic')
         x_new = np.linspace(interpol_start, interpol_end, num=interpol_point_num, endpoint=True)
         after_interpolation.append(f(x_new))
     return after_interpolation

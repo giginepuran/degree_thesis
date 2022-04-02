@@ -205,6 +205,16 @@ set("y max", scale + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
+# wg2 center (+x)
+addpower;
+set("name","P_wg2_center");
+set("monitor type","2D X-normal");
+set("x", scale + 1e-6);
+set("y", scale/2);
+set("y span", scale/4);
+set("z", height/2);
+set("z span", 0.5e-6);
+
 # reflection monitor
 addpower;
 set("name","reflection");
