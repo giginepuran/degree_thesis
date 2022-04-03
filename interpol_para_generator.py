@@ -41,5 +41,3 @@ for para_no in range(1, parameter_num+1):
     for i in range(1, 21):
         script = script.replace(f'para__{i}', f'{round(after_interpolation[para_no-1][i-1], 2)}')
     print(script)
-print(paras)
-print(after_interpolation)
