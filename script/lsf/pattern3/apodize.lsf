@@ -21,7 +21,7 @@ if (mode == 1)
           para3__16,para3__17,para3__18,para3__19,para3__20]*1e-9;
     
     deep    = 220*1e-9;
-    shallow = 70*1e-9;
+    shallow = 150*1e-9;
 } else if (mode == 2)
 {
     l1 = [180, 180, 180, 180, 180,
@@ -40,7 +40,7 @@ if (mode == 1)
           600, 600, 600, 600, 600]*1e-9;
           
     deep    = 220*1e-9;
-    shallow = 70*1e-9;
+    shallow = 150*1e-9;
 }
 unit = l3;
 height = 220e-9;
@@ -342,7 +342,7 @@ vtx = [col_structs{j}.deep.xmin,row_structs{i}.deep.ymin;
 addpoly;
 set("name","deep");
 set("vertices",vtx);
-set("z min",220e-9-150e-9);
+set("z min",220e-9-deep);
 set("z max",220e-9);
 set("material","SiO2 (Glass) - Palik");
 set("override mesh order from material database",1);
