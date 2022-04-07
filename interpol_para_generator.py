@@ -15,7 +15,7 @@ from scipy.interpolate import interp1d
 
 parameter_num = 3
 dimension = parameter_num * 5
-gbest_path = 'D:/saving_path_0402_0.44/Gen40/gbest'
+gbest_path = 'D:/saving_path_0404_0.45_double_ind/Gen10/gbest'
 
 paras = []
 for para_no in range(1, dimension+1):

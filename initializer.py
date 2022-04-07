@@ -30,7 +30,7 @@ gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
 
 transfer_folder_id = '1E057cpokP4uldG6ZdoMLrk6p4JTEwmJ9'
-population = 40
+population = 20
 
 print('Initializing transfer folder on google drive ...')
 initialize_drive_transfer_folder(drive, transfer_folder_id, population)
