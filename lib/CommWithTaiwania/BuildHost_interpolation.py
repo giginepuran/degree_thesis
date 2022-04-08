@@ -40,6 +40,9 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print(f'number of fsp files is wrong\nActually number : {len(fsp_info_list)}\nExpected : {population}')
         return
 
+    drive = Transfer.refresh_drive_by_gauth()
+    Transfer.change_mode_then_upload(drive, transfer_folder_id, mode_file_info, local_transfer_folder, 'building_fsp')
+
     print('Build host start working ...\n')
     generation = 1
     while generation <= max_generation:

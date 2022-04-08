@@ -4,7 +4,7 @@ band_mode = 1;
 # 1:for pso workflow, 2:for accuracy fsp
 accu_mode = 1;
 # 1:for python, 2:for lumerical
-mode = 1;
+mode = 2;
 if (mode == 1)
 {
     l1 = [para1__1, para1__2, para1__3, para1__4, para1__5,
@@ -21,7 +21,7 @@ if (mode == 1)
           para3__6, para3__7, para3__8, para3__9, para3__10,
           para3__11,para3__12,para3__13,para3__14,para3__15,
           para3__16,para3__17,para3__18,para3__19,para3__20]*1e-9;
-    cell_tilt = para4__1;
+    cell_tilt = para4_1;
     
     deep    = 220*1e-9;
     shallow = 70*1e-9;
@@ -42,7 +42,7 @@ if (mode == 1)
           500, 500, 500, 500, 500,
           550, 550, 550, 550, 550,
           600, 600, 600, 600, 600]*1e-9;
-    cell_tilt = -5;
+    cell_tilt = 5;
     deep    = 220*1e-9;
     shallow = 70*1e-9;
     tilt    = 10;
@@ -182,10 +182,10 @@ set("override mesh order from material database",1);
 set("mesh order",5);
 
 # waveguides
-vtx = [p2x,p2y;
-       p2x,UBY + pos_extend + 1e-6;
-       p3x,UBY + pos_extend + 1e-6;
-       p3x,p3y];
+vtx = [LBX,UBY;
+       LBX,UBY + pos_extend + 1e-6;
+       UBX,UBY + pos_extend + 1e-6;
+       UBX,UBY];
 addpoly;
 set("name","wg1");
 set("vertices",vtx);
@@ -195,10 +195,10 @@ set("material","Si (Silicon) - Palik");
 set("override mesh order from material database",1);
 set("mesh order",2);
 
-vtx = [p4x,p4y;
-       p3x,p3y;
-       UBX + pos_extend + 1e-6,p3y;
-       UBX + pos_extend + 1e-6,p4y];
+vtx = [UBX,LBY;
+       UBX,UBY;
+       UBX + pos_extend + 1e-6,UBY;
+       UBX + pos_extend + 1e-6,LBY];
 addpoly;
 set("name","wg2");
 set("vertices",vtx);
@@ -217,8 +217,8 @@ groupscope("::model::monitor");
 addpower;
 set("name","P_wg1");
 set("monitor type","2D Y-normal");
-set("x min", p2x - 1e-6);
-set("x max", p3x + 1e-6);
+set("x min", LBX - 1e-6);
+set("x max", UBX + 1e-6);
 set("y", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
@@ -228,8 +228,8 @@ addpower;
 set("name","P_wg2");
 set("monitor type","2D X-normal");
 set("x", UBX + 1e-6);
-set("y min", p4y - 1e-6);
-set("y max", p3y + 1e-6);
+set("y min", LBY - 1e-6);
+set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
@@ -238,8 +238,8 @@ addpower;
 set("name","P_wg2_far");
 set("monitor type","2D X-normal");
 set("x", UBX + pos_extend - 1e-6);
-set("y min", p4y - 1e-6);
-set("y max", p3y + 1e-6);
+set("y min", LBY - 1e-6);
+set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
@@ -248,8 +248,8 @@ addpower;
 set("name","P_wg2_center");
 set("monitor type","2D X-normal");
 set("x", UBX + pos_extend - 1e-6);
-set("y", (p3y+p4y)/2);
-set("y span", (p3y-p4y)/6);
+set("y", (UBY+LBY)/2);
+set("y span", (UBY-LBY)/6);
 set("z", height/2);
 set("z span", 0.5e-6);
     
@@ -339,10 +339,10 @@ addstructuregroup;
 set("name","template");
 
 # silicon for all
-vtx = [0,0;
-       p2x,p2y;
-       p3x,p3y;
-       p4x,p4y];
+vtx = [LBX,LBY;
+       LBX,UBY;
+       UBX,UBY;
+       UBX,LBY];
 addpoly;
 set("name","silicon");
 set("vertices",vtx);
