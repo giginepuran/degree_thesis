@@ -94,6 +94,13 @@ def step10_inherit_pbest_to_next_generation(saving_path: str, current_generation
     ArrangeFile.inherit_pbest_to_next_generation(saving_path, current_generation, population, dimension)
 
 
+def step11_remove_some_fsp(saving_path: str, generation: int, population: int):
+    gen_path = f'{saving_path}/Gen{generation}'
+    for p in range(1, population+1):
+        os.remove(f'{gen_path}/p{p}/ind{p}.fsp')
+        os.remove(f'{gen_path}/p{p}/pbest/ind{p}.fsp')
+
+
 def interpolation_by_swarm(particle_x: np.ndarray, dimension: int, parameter_num: int,
                            interpol_point_num: int, interpol_start: int, interpol_end: int):
     after_interpolation = []
@@ -115,12 +122,12 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
     if not os.path.exists(build_lsf):
         return -1
     for p in range(1, population+1):
-        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 20, 1, 20)
+        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 10, 1, 10)  # original : 20, 1, 20
         build_script = open(f'{build_lsf}', 'r').read()
         for para_no in range(1, parameter_num+1):
             set_of_para = parameters[para_no-1]
-            for para_no_no in range(1, 20+1):
-                build_script = build_script.replace(f'para{para_no}__{para_no_no}',
+            for para_no_no in range(1, 10+1):  # original : 20+1
+                build_script = build_script.replace(f'para{para_no}__{para_no_no}__',
                                                     f'{round(set_of_para[para_no_no - 1], 2)}')
         LumAPI.build_fsp(fdtd, build_script)
         fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
@@ -130,10 +137,5 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
         time.sleep(10)
 
 
-def step11_remove_some_fsp(saving_path: str, generation: int, population: int):
-    gen_path = f'{saving_path}/Gen{generation}'
-    for p in range(1, population+1):
-        os.remove(f'{gen_path}/p{p}/ind{p}.fsp')
-        os.remove(f'{gen_path}/p{p}/pbest/ind{p}.fsp')
 
 

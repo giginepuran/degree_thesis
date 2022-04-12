@@ -13,9 +13,9 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 
-parameter_num = 3
+parameter_num = 4
 dimension = parameter_num * 5
-gbest_path = 'D:/saving_path_0404_0.45_double_ind/Gen10/gbest'
+gbest_path = 'E:/degree_thesis/local/saving_path/Gen10/gbest'
 
 paras = []
 for para_no in range(1, dimension+1):
@@ -31,13 +31,13 @@ for para_no in range(1, parameter_num+1):
     x_new = np.linspace(1, 20, num=20, endpoint=True)
     after_interpolation.append(f(x_new))
 
-lsf_para = 'ln = [para__1, para__2, para__3, para__4, para__5,\n' + \
-           '      para__6, para__7, para__8, para__9, para__10,\n' + \
-           '      para__11,para__12,para__13,para__14,para__15,\n' + \
-           '      para__16,para__17,para__18,para__19,para__20]*1e-9;\n'
+lsf_para = 'ln = [para__1__, para__2__, para__3__, para__4__, para__5__,\n' + \
+           '      para__6__, para__7__, para__8__, para__9__, para__10__,\n' + \
+           '      para__11__,para__12__,para__13__,para__14__,para__15__,\n' + \
+           '      para__16__,para__17__,para__18__,para__19__,para__20__]*1e-9;\n'
 for para_no in range(1, parameter_num+1):
     script = lsf_para
     script = script.replace('ln', f'l{para_no}')
     for i in range(1, 21):
-        script = script.replace(f'para__{i}', f'{round(after_interpolation[para_no-1][i-1], 2)}')
+        script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 2)}')
     print(script)

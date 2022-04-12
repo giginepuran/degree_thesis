@@ -24,8 +24,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
     print('-------------------------------------')
 
     print('initializing saving path ...')
-    if PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population) == -1:
-        return
+    PSO_Flow.step1_initialize_saving_path(saving_path, max_generation, population)
 
     print('opening fdtd gui ...')
     fdtd = lumapi.FDTD(hide=False)
@@ -50,7 +49,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/pattern3/uniform.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/pattern1/uniform.lsf',
                                           local_transfer_folder, dimension, population)
 
         print('Updating *.fsp to drive transfer folder ...')
