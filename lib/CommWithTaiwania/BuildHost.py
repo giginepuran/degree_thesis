@@ -14,7 +14,8 @@ from lib.MyLumerical import PSO_Flow
 
 def build_work(population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
-               dimension: int, floor: list, ceiling: list, saving_path: str):
+               dimension: int, floor: list, ceiling: list, saving_path: str,
+               build_lsf: str, get_data_lsf: str):
     print('PSO settings:')
     print(f'local transfer folder : {local_transfer_folder}')
     print(f'          saving path : {saving_path}')
@@ -49,7 +50,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, 'E:/degree_thesis/script/lsf/pattern1/uniform.lsf',
+        PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, build_lsf,
                                           local_transfer_folder, dimension, population)
 
         print('Updating *.fsp to drive transfer folder ...')
@@ -70,7 +71,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
             Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
 
         print('Collecting data from *.fsp ...')
-        fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, 'E:/degree_thesis/script/lsf/getData.lsf',
+        fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, get_data_lsf,
                                                       population, local_transfer_folder)
 
         print('Updating fom of each particle to swarm ...')

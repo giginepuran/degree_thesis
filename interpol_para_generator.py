@@ -13,9 +13,9 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 
-parameter_num = 4
+parameter_num = 3
 dimension = parameter_num * 5
-gbest_path = 'E:/degree_thesis/local/saving_path/Gen10/gbest'
+gbest_path = 'D:/0413_VTAPO_0.2/Gen17/gbest'
 
 paras = []
 for para_no in range(1, dimension+1):

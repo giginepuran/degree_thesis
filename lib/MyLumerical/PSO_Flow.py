@@ -122,11 +122,11 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
     if not os.path.exists(build_lsf):
         return -1
     for p in range(1, population+1):
-        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 10, 1, 10)  # original : 20, 1, 20
+        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 20, 1, 20)
         build_script = open(f'{build_lsf}', 'r').read()
         for para_no in range(1, parameter_num+1):
             set_of_para = parameters[para_no-1]
-            for para_no_no in range(1, 10+1):  # original : 20+1
+            for para_no_no in range(1, 20+1):
                 build_script = build_script.replace(f'para{para_no}__{para_no_no}__',
                                                     f'{round(set_of_para[para_no_no - 1], 2)}')
         LumAPI.build_fsp(fdtd, build_script)
