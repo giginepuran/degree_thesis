@@ -2,7 +2,7 @@ newproject;
 
 unit_floor = 450; # unit: nm
 unit_ceiling = 650; # unit: nm
-step = 0.05; # unit: nm
+step = 5; # unit: nm
 unit_number = 20;
 height = 220e-9;
 
