@@ -52,6 +52,7 @@ def get_mode_profile_y(fdtd: lumapi.FDTD, fsp_path: str):
             fdtd.eval(lsf_script)
             result["p_of_y"] = fdtd.getv('PofY')
             result["y"] = fdtd.getv('y')
+            result["scale"] = fdtd.getv('scale')
             fdtd.eval('newproject;')
             time.sleep(5)
             success = True
@@ -61,3 +62,5 @@ def get_mode_profile_y(fdtd: lumapi.FDTD, fsp_path: str):
             time.sleep(10)
     return result
 
+
+#def get_FOM_from_mode_profile(fdtd: lumapi.FDTD, fsp_path: str):

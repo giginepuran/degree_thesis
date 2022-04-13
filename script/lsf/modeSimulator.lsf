@@ -75,3 +75,4 @@ sigma_y = sigma_y(2:end);
 mu_z = mu_z(2:end);
 sigma_z = sigma_z(2:end);
 scales = scales(2:end);
+
