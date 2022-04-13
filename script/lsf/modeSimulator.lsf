@@ -1,0 +1,77 @@
+newproject;
+
+unit_floor = 450; # unit: nm
+unit_ceiling = 650; # unit: nm
+step = 0.05; # unit: nm
+unit_number = 20;
+height = 220e-9;
+
+mu_y = -1;
+sigma_y = -1;
+mu_z = -1;
+sigma_z = -1;
+scales = -1;
+
+for (unit = unit_floor; unit <= unit_ceiling; unit=unit+step)
+{
+    switchtolayout;
+    deleteall;
+    scale = unit*20*1e-9;
+    scales = [scales, scale];
+
+    addrect;
+    set("name","outputWG");
+    set("x min",0);
+    set("x max",2e-6);
+    set("y min",0);
+    set("y max",scale);
+    set("z min", 0);
+    set("z max", height);
+    set("material","Si (Silicon) - Palik");
+    set("override mesh order from material database",1);
+    set("mesh order",2);
+
+    addrect;
+    set("name","cladding");
+    set("x min",0);
+    set("x max",2e-6);
+    set("y min",0-2e-6);
+    set("y max",scale+2e-6);
+    set("z min", 0-2e-6);
+    set("z max", height+2e-6);
+    set("material","SiO2 (Glass) - Palik");
+    set("override mesh order from material database",1);
+    set("mesh order",5);
+
+    addfde;
+    set("solver type","2D X normal");
+    set("x",1e-6);
+    set("y min",0-1e-6);
+    set("y max",scale+1e-6);
+    set("z min",0-1e-6);
+    set("z max",height+1e-6);
+
+    findmodes;
+    out = getresult("FDE::data::mode1","P");
+    y = out.y;
+    z = out.z;
+    P = abs(pinch(out.P));
+    P = pinch((P(:,:,1)^2+P(:,:,2)^2+P(:,:,3)^2)^0.5);
+    # index1 : z-direction
+    # index2 : y-direction
+    PofZ = sum(P,1);
+    PofY = sum(P,1);
+
+    fit = fitnormpdf(y, PofY);
+    mu_y = [mu_y, fit(2)];
+    sigma_y = [sigma_y, fit(3)];
+    fit = fitnormpdf(z, PofZ);
+    mu_z = [mu_z, fit(2)];
+    sigma_z = [sigma_z, fit(3)];
+}
+
+mu_y = mu_y(2:end);
+sigma_y = sigma_y(2:end);
+mu_z = mu_z(2:end);
+sigma_z = sigma_z(2:end);
+scales = scales(2:end);
