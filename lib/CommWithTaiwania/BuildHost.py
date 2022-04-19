@@ -15,7 +15,7 @@ from lib.MyLumerical import PSO_Flow
 def build_work(population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
                dimension: int, floor: list, ceiling: list, saving_path: str,
-               build_lsf: str, get_data_lsf: str):
+               build_lsf: str, fom_function):
     print('PSO settings:')
     print(f'local transfer folder : {local_transfer_folder}')
     print(f'          saving path : {saving_path}')
@@ -71,8 +71,7 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
             Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
 
         print('Collecting data from *.fsp ...')
-        fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, get_data_lsf,
-                                                      population, local_transfer_folder)
+        fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, population, local_transfer_folder, fom_function)
 
         print('Updating fom of each particle to swarm ...')
         pbest_changed = PSO_Flow.step5_update_fom_to_swarm(my_swarm, fom)

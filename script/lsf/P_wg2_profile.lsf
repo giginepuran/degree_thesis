@@ -1,4 +1,4 @@
-out = getresult("monitor::P_wg2_far","P");
+out = getresult("monitor::P_wg2","P");
 y = out.y;
 z = out.z;
 P = abs(pinch(out.P));

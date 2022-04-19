@@ -2,7 +2,7 @@ newproject;
 
 unit_floor = 450; # unit: nm
 unit_ceiling = 650; # unit: nm
-step = 5; # unit: nm
+step = 1000; # unit: nm, original 5
 unit_number = 20;
 height = 220e-9;
 
@@ -16,7 +16,8 @@ for (unit = unit_floor; unit <= unit_ceiling; unit=unit+step)
 {
     switchtolayout;
     deleteall;
-    scale = unit*20*1e-9;
+    scale = 11.5493e-6;
+    #scale = unit*20*1e-9;
     scales = [scales, scale];
 
     addrect;

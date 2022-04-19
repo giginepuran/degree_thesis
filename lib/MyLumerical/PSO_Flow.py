@@ -50,11 +50,10 @@ def step3_build_fsp_by_swarm(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf
 # 1. upload the latest fsp files
 # 2. waiting simulation on taiwania finished
 # 3. download the fsp files with data to build host
-def step4_get_fom_of_each_particle(fdtd: lumapi.FDTD, get_data_lsf: str, population: int, local_transfer_folder: str):
+def step4_get_fom_of_each_particle(fdtd: lumapi.FDTD, population: int, local_transfer_folder: str, fom_function):
     fom = []
-    get_data_script = open(f'{get_data_lsf}', 'r').read()
     for p in range(1, population+1):
-        result = LumAPI.get_fom(fdtd, get_data_script, f'{local_transfer_folder}/ind{p}.fsp')
+        result = fom_function(fdtd, f'{local_transfer_folder}/ind{p}.fsp')
         fom.append(result)
     return fom
 
@@ -122,11 +121,11 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
     if not os.path.exists(build_lsf):
         return -1
     for p in range(1, population+1):
-        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 20, 1, 20)
+        parameters = interpolation_by_swarm(my_swarm.particles[p-1].get_x(), dimension, parameter_num, 20, 1, 20)  # 20, 1, 20
         build_script = open(f'{build_lsf}', 'r').read()
         for para_no in range(1, parameter_num+1):
             set_of_para = parameters[para_no-1]
-            for para_no_no in range(1, 20+1):
+            for para_no_no in range(1, 20+1):  # 20+1
                 build_script = build_script.replace(f'para{para_no}__{para_no_no}__',
                                                     f'{round(set_of_para[para_no_no - 1], 2)}')
         LumAPI.build_fsp(fdtd, build_script)
