@@ -76,6 +76,34 @@ def get_mode_profile_y(fdtd: lumapi.FDTD, fsp_path: str):
     return result
 
 
+def run_lsf_in_fdtd(fdtd: lumapi.FDTD, lsf_path: str):
+    lsf_script = open(lsf_path, 'r').read()
+    success = False
+    count_f = 0
+    while not success:
+        try:
+            fdtd.eval(lsf_script)
+            time.sleep(1.5)
+            success = True
+        except:
+            count_f = count_f + 1
+            print(f'run lsf failed, count = {count_f}')
+            time.sleep(10)
+
+
+def get_value_from_fdtd(fdtd: lumapi.FDTD, para_name: str):
+    success = False
+    count_f = 0
+    while not success:
+        try:
+            result = fdtd.getv(para_name)
+            return result
+        except:
+            count_f = count_f + 1
+            print(f'get value failed, count = {count_f}')
+            time.sleep(10)
+
+
 def gaussian(x, mu, sig):
     return np.exp((x - mu)*(x - mu) / (sig*sig) / 2)
 

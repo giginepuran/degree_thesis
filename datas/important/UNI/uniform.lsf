@@ -1,34 +1,34 @@
 newproject;
-# 1:for pso workflow, 2:for expand bandwidth with 200nm
+# 1:for pso workflow, 2:for expand bandwidth with 100nm
 band_mode = 1;
 # 1:for pso workflow, 2:for accuracy fsp
-accu_mode = 1;
+accu_mode = 2;
 # 1:for python, 2:for lumerical
 mode = 1;
 if (mode == 1)
 {
-    l1 = [para1__1__, para1__2__, para1__3__, para1__4__, para1__5__,
-          para1__6__, para1__7__, para1__8__, para1__9__, para1__10__,
-          para1__11__, para1__12__, para1__13__, para1__14__, para1__15__,
-          para1__16__, para1__17__, para1__18__, para1__19__, para1__20__]*1e-9;
-    l2 = [para2__1__, para2__2__, para2__3__, para2__4__, para2__5__,
-          para2__6__, para2__7__, para2__8__, para2__9__, para2__10__,
-          para2__11__, para2__12__, para2__13__, para2__14__, para2__15__,
-          para2__16__, para2__17__, para2__18__, para2__19__, para2__20__]*1e-9;
-    l3 = [para3__1__, para3__2__, para3__3__, para3__4__, para3__5__,
-          para3__6__, para3__7__, para3__8__, para3__9__, para3__10__,
-          para3__11__, para3__12__, para3__13__, para3__14__, para3__15__,
-          para3__16__, para3__17__, para3__18__, para3__19__, para3__20__]*1e-9;
-    l4 = [para4__1__, para4__2__, para4__3__, para4__4__, para4__5__,
-          para4__6__, para4__7__, para4__8__, para4__9__, para4__10__,
-          para4__11__, para4__12__, para4__13__, para4__14__, para4__15__,
-          para4__16__, para4__17__, para4__18__, para4__19__, para4__20__]*1e-9;
-    l5 = [para5__1__, para5__2__, para5__3__, para5__4__, para5__5__,
-          para5__6__, para5__7__, para5__8__, para5__9__, para5__10__,
-          para5__11__, para5__12__, para5__13__, para5__14__, para5__15__,
-          para5__16__, para5__17__, para5__18__, para5__19__, para5__20__]*1e-9;
-    cell_tilt = para6__1__;
-    fiber_offset = para7__1__*1e-9;
+    l1 = [158.60, 158.60, 158.60, 158.60, 158.60,
+          158.60, 158.60, 158.60, 158.60, 158.60,
+          158.60, 158.60, 158.60, 158.60, 158.60,
+          158.60, 158.60, 158.60, 158.60, 158.60]*1e-9;
+    l2 = [379.06, 379.06, 379.06, 379.06, 379.06,
+          379.06, 379.06, 379.06, 379.06, 379.06,
+          379.06, 379.06, 379.06, 379.06, 379.06,
+          379.06, 379.06, 379.06, 379.06, 379.06]*1e-9;
+    l3 = [641.57, 641.57, 641.57, 641.57, 641.57,
+          641.57, 641.57, 641.57, 641.57, 641.57,
+          641.57, 641.57, 641.57, 641.57, 641.57,
+          641.57, 641.57, 641.57, 641.57, 641.57]*1e-9;
+    l4 = [11.78, 11.78, 11.78, 11.78, 11.78,
+          11.78, 11.78, 11.78, 11.78, 11.78,
+          11.78, 11.78, 11.78, 11.78, 11.78,
+          11.78, 11.78, 11.78, 11.78, 11.78]*1e-9;
+    l5 = [148.73, 148.73, 148.73, 148.73, 148.73,
+          148.73, 148.73, 148.73, 148.73, 148.73,
+          148.73, 148.73, 148.73, 148.73, 148.73,
+          148.73, 148.73, 148.73, 148.73, 148.73]*1e-9;
+    cell_tilt = 2.57;
+    fiber_offset = 1118.92*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
     tilt    = 10;
@@ -226,6 +226,32 @@ set("material","Si (Silicon) - Palik");
 set("override mesh order from material database",1);
 set("mesh order",2);
 
+vtx = [LBX,LBY;
+       LBX,LBY - pos_extend - 1e-6;
+       UBX,LBY - pos_extend - 1e-6;
+       UBX,LBY];
+addpoly;
+set("name","-wg1");
+set("vertices",vtx);
+set("z min",0);
+set("z max",height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
+vtx = [LBX,LBY;
+       LBX,UBY;
+       LBX - pos_extend - 1e-6,UBY;
+       LBX - pos_extend - 1e-6,LBY];
+addpoly;
+set("name","-wg2");
+set("vertices",vtx);
+set("z min",0);
+set("z max",height);
+set("material","Si (Silicon) - Palik");
+set("override mesh order from material database",1);
+set("mesh order",2);
+
 select("::model::other");
 addtogroup("DO_NOT_OPEN");
 
@@ -268,16 +294,6 @@ set("monitor type","2D X-normal");
 set("x", LBX - 1e-6);
 set("y min", LBY - 1e-6);
 set("y max", UBY + 1e-6);
-set("z", height/2);
-set("z span", 0.5e-6);
-
-# wg1 far (+y)
-addpower;
-set("name","P_wg1_far");
-set("monitor type","2D Y-normal");
-set("x min", LBX - 1e-6);
-set("x max", UBX + 1e-6);
-set("y", UBY + pos_extend - 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 

@@ -1,0 +1,3 @@
+T2 = transmission("::model::monitor::P_wg2");
+T1 = transmission("::model::monitor::P_wg1");
+T_tot = T2+T1;
