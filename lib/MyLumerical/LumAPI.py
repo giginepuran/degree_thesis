@@ -40,6 +40,28 @@ def get_transmission_wg2_fom(fdtd: lumapi.FDTD, fsp_path: str):
     return fom
 
 
+def get_transmission_wg2_far_fom(fdtd: lumapi.FDTD, fsp_path: str):
+    if not os.path.exists(fsp_path):
+        return -1
+    success = False
+    count_f = 0
+    lsf_script = open('E:/degree_thesis/script/lsf/T_P_wg2_far.lsf', 'r').read()
+    while not success:
+        try:
+            fdtd.eval('newproject;')
+            fdtd.load(fsp_path)
+            fdtd.eval(lsf_script)
+            fom = fdtd.getv('T2')
+            fdtd.eval('newproject;')
+            time.sleep(5)
+            success = True
+        except:
+            count_f = count_f + 1
+            print(f'Getting FOM failed, count = {count_f}')
+            time.sleep(10)
+    return fom
+
+
 # std_y = 0.0403scale + 8E-08
 def get_mode_mismatch_fom(fdtd: lumapi.FDTD, fsp_path: str):
     info = get_mode_profile_y(fdtd, fsp_path)
@@ -47,7 +69,7 @@ def get_mode_mismatch_fom(fdtd: lumapi.FDTD, fsp_path: str):
     sig = 0.0403 * info["scale"] + 8E-08
     t2 = get_transmission_wg2_fom(fdtd, fsp_path)  # enhance the weight of coupling efficiency
     gaussian_profile = gaussian(x=info["y"], mu=info["scale"]/2, sig=sig)
-    fom = -tot_error_square(normalize(gaussian_profile), normalize(info["p_of_y"]))/size/(t2**10)
+    fom = -tot_error_square(normalize(gaussian_profile), normalize(info["p_of_y"]))/size/(t2**2)
     return fom
 
 

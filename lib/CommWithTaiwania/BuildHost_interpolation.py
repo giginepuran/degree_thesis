@@ -50,8 +50,8 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         print('-------------------------------------')
 
         print('Building fsp ...')
-        PSO_Flow.step3_build_fsp_by_swarm_interpolation(fdtd, my_swarm, build_lsf,
-                                                        local_transfer_folder, dimension, population, parameter_num)
+        PSO_Flow.step3_build_fsp_by_swarm_interpolation_nonuniform(fdtd, my_swarm, build_lsf,
+                                                                   local_transfer_folder, dimension, population, parameter_num)
 
         print('Updating *.fsp to drive transfer folder ...')
         drive = Transfer.refresh_drive_by_gauth()

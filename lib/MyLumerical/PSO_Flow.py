@@ -100,19 +100,6 @@ def step11_remove_some_fsp(saving_path: str, generation: int, population: int):
         os.remove(f'{gen_path}/p{p}/pbest/ind{p}.fsp')
 
 
-def interpolation_by_swarm(particle_x: np.ndarray, dimension: int, parameter_num: int,
-                           interpol_point_num: int, interpol_start: int, interpol_end: int):
-    after_interpolation = []
-    num_of_point_in_a_set = dimension // parameter_num
-    for para_no in range(1, parameter_num+1):
-        x = np.linspace(interpol_start, interpol_end, num=num_of_point_in_a_set, endpoint=True)
-        y = particle_x[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
-        f = interp1d(x, y.reshape(num_of_point_in_a_set,), kind='cubic')
-        x_new = np.linspace(interpol_start, interpol_end, num=interpol_point_num, endpoint=True)
-        after_interpolation.append(f(x_new))
-    return after_interpolation
-
-
 def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf: str,
                                            local_transfer_folder: str, dimension: int, population: int,
                                            parameter_num: int):
@@ -136,5 +123,52 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
         time.sleep(10)
 
 
+def step3_build_fsp_by_swarm_interpolation_nonuniform(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf: str,
+                                                      local_transfer_folder: str, dimension: int, population: int,
+                                                      parameter_num: int):
+    if not os.path.isdir(local_transfer_folder):
+        return -1
+    if not os.path.exists(build_lsf):
+        return -1
+    x_new = np.array([xx for xx in range(1, 21)])
+    x = np.array([1, 3, 7, 12, 17])
+    for p in range(1, population+1):
+        parameters = interpolation_by_swarm_nonuniform_extrapolate(my_swarm.particles[p-1].get_x(), dimension,
+                                                                   parameter_num, x, x_new)
+        build_script = open(f'{build_lsf}', 'r').read()
+        for para_no in range(1, parameter_num+1):
+            set_of_para = parameters[para_no-1]
+            for para_no_no in range(1, 20+1):  # 20+1
+                build_script = build_script.replace(f'para{para_no}__{para_no_no}__',
+                                                    f'{round(set_of_para[para_no_no - 1], 2)}')
+        LumAPI.build_fsp(fdtd, build_script)
+        fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
+        fdtd.eval("newproject;")
+        # after building, fdtd need time to release resource.
+        # Otherwise, it will build very very slow...
+        time.sleep(10)
 
+
+def interpolation_by_swarm(particle_x: np.ndarray, dimension: int, parameter_num: int,
+                           interpol_point_num: int, interpol_start: int, interpol_end: int):
+    after_interpolation = []
+    num_of_point_in_a_set = dimension // parameter_num
+    for para_no in range(1, parameter_num+1):
+        x = np.linspace(interpol_start, interpol_end, num=num_of_point_in_a_set, endpoint=True)
+        y = particle_x[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
+        f = interp1d(x, y.reshape(num_of_point_in_a_set,), kind='cubic')
+        x_new = np.linspace(interpol_start, interpol_end, num=interpol_point_num, endpoint=True)
+        after_interpolation.append(f(x_new))
+    return after_interpolation
+
+
+def interpolation_by_swarm_nonuniform_extrapolate(particle_x: np.ndarray, dimension: int, parameter_num: int,
+                                                  x, x_new):
+    after_interpolation = []
+    num_of_point_in_a_set = dimension // parameter_num
+    for para_no in range(1, parameter_num+1):
+        y = particle_x[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
+        f = interp1d(x, y.reshape(num_of_point_in_a_set,), kind='cubic', fill_value='extrapolate')
+        after_interpolation.append(f(x_new))
+    return after_interpolation
 
