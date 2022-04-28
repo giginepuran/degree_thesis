@@ -226,32 +226,6 @@ set("material","Si (Silicon) - Palik");
 set("override mesh order from material database",1);
 set("mesh order",2);
 
-vtx = [LBX,LBY;
-       LBX,LBY - pos_extend - 1e-6;
-       UBX,LBY - pos_extend - 1e-6;
-       UBX,LBY];
-addpoly;
-set("name","-wg1");
-set("vertices",vtx);
-set("z min",0);
-set("z max",height);
-set("material","Si (Silicon) - Palik");
-set("override mesh order from material database",1);
-set("mesh order",2);
-
-vtx = [LBX,LBY;
-       LBX,UBY;
-       LBX - pos_extend - 1e-6,UBY;
-       LBX - pos_extend - 1e-6,LBY];
-addpoly;
-set("name","-wg2");
-set("vertices",vtx);
-set("z min",0);
-set("z max",height);
-set("material","Si (Silicon) - Palik");
-set("override mesh order from material database",1);
-set("mesh order",2);
-
 select("::model::other");
 addtogroup("DO_NOT_OPEN");
 
