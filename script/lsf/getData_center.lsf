@@ -1,2 +1,0 @@
-T2 = transmission("::model::monitor::P_wg2_center");
-FOM = T2;

@@ -1,4 +1,6 @@
 newproject;
+# 1:for taiwania, 2:for local fdtd saving time
+scale_mode = 2;
 # 1:for pso workflow, 2:for expand bandwidth with 200nm
 band_mode = 1;
 # 1:for pso workflow, 2:for accuracy fsp
@@ -9,50 +11,67 @@ if (mode == 1)
 {
     l1 = [para1__, para1__, para1__, para1__, para1__,
           para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__,
+          para1__, para1__, para1__, para1__, para1__,
           para1__, para1__, para1__, para1__, para1__]*1e-9;
-
     l2 = [para2__, para2__, para2__, para2__, para2__,
           para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__,
-	  para2__, para2__, para2__, para2__, para2__]*1e-9;
-
+          para2__, para2__, para2__, para2__, para2__,
+          para2__, para2__, para2__, para2__, para2__]*1e-9;
     l3 = [para3__, para3__, para3__, para3__, para3__,
           para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__,
+          para3__, para3__, para3__, para3__, para3__,
           para3__, para3__, para3__, para3__, para3__]*1e-9;
-    cell_tilt = 0;
-    
+    l4 = [para4__, para4__, para4__, para4__, para4__,
+          para4__, para4__, para4__, para4__, para4__,
+          para4__, para4__, para4__, para4__, para4__,
+          para4__, para4__, para4__, para4__, para4__]*1e-9;
+    l5 = [para5__, para5__, para5__, para5__, para5__,
+          para5__, para5__, para5__, para5__, para5__,
+          para5__, para5__, para5__, para5__, para5__,
+          para5__, para5__, para5__, para5__, para5__]*1e-9;
+    cell_tilt = para6__;
+    fiber_offset = para7__*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
-    tilt    = 0;
+    tilt    = 10;
 } else if (mode == 2)
 {
     l1 = [130, 130, 130, 130, 130, 
           130, 130, 130, 130, 130, 
-          130, 130, 130, 130, 
+          130, 130, 130, 130, 130,
           130, 130, 130, 130, 130]*1e-9;
           
     l2 = [180, 180, 180, 180, 180,
           180, 180, 180, 180, 180,
-          180, 180, 180, 180,
+          180, 180, 180, 180, 180,
           180, 180, 180, 180, 180]*1e-9;
 
-    l3 = [450, 450, 450, 450, 450,
-          500, 500, 500, 500, 650,
-          500, 500, 500, 450,
-          450, 450, 450, 450, 450]*1e-9;
-    cell_tilt = 0;
+    l3 = [650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650]*1e-9;
+    
+    l4 = [60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60]*1e-9;
+          
+    l5 = [30, 30, 30, 30, 30,
+          30, 30, 30, 30, 30,
+          30, 30, 30, 30, 30,
+          30, 30, 30, 30, 30]*1e-9;
+    cell_tilt = 2.3;
+    fiber_offset = 1500*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
-    tilt    = 0;
+    tilt    = 10;
 }
 tct = tan(cell_tilt*pi/180);
 cct = cos(cell_tilt*pi/180);
 sct = sin(cell_tilt*pi/180);
 unit = l3;
 height = 220e-9;
-N = 19;
+N = 20;
 scale = sum(unit);
 # x' = x*(tct*tct+1)+y*tct,
 # y' = x*tct+y*(tct*tct+1);
@@ -67,10 +86,25 @@ LBY = min([0,p4y]);
 UBX = max([p3x,p4x]); #UB : upper boundary
 UBY = max([p2y,p3y]);
 # enviroment and platform
-pos_extend = 6.5e-6;
-neg_extend = 2e-6;
+if (scale_mode == 1)
+{
+    pos_extend = 6.5e-6;
+    neg_extend = 2e-6;
+}
+else
+{
+    pos_extend = 2e-6;
+    neg_extend = 2e-6;
+}
 BOX_thickness = 2e-6;
-fiber_distance = 2e-6;
+if (scale_mode == 1)
+{
+    fiber_distance = 2e-6;
+}
+else
+{
+    fiber_distance = 300e-9;
+}
 # groups---------------------------------------------
 addstructuregroup;
 set("name","DO_NOT_OPEN");
@@ -92,7 +126,14 @@ set("x min", LBX - neg_extend);
 set("x max", UBX + pos_extend);
 set("y min", LBY - neg_extend);
 set("y max", UBY + pos_extend);
-set("z min", -BOX_thickness - 0.6e-6);
+if (scale_mode == 1)
+{
+    set("z min", -BOX_thickness - 0.6e-6);
+}
+else
+{
+    set("z min", -0.6e-6);
+}
 set("z max", height + fiber_distance + 0.6e-6);
 if (accu_mode == 2)
 {
@@ -100,13 +141,13 @@ if (accu_mode == 2)
 }
 
 # source-------------------------------------------
-shift = fiber_distance*tan(tilt/180*pi);
+shift = fiber_offset;
 addgaussian;
 set("injection axis","z");
 set("direction","Backward");
-set("x", (UBX+LBX)/2-shift/2^0.5);
+set("x", (UBX+LBX)/2-shift/(2^0.5));
 set("x span",UBX-LBX);
-set("y", (UBY+LBY)/2-shift/2^0.5);
+set("y", (UBY+LBY)/2-shift/(2^0.5));
 set("y span",UBY-LBY);
 set("z", height+fiber_distance);
 set("angle phi", 45);
@@ -114,17 +155,18 @@ set("angle theta", 0);
 set("polarization angle", 45);
 set("angle theta", -tilt);
 set("use scalar approximation",1);
-set("waist radius w0", 4.6e-6/(20/N));
+set("waist radius w0", 4.6e-6);
 set("set wavelength", 1);
 set("optimize for short pulse", 0);
 if (band_mode == 2)
 {
-    set("wavelength span", 200e-9);
+    set("wavelength span", 60e-9);
 }else{
     set("wavelength span", 0);
 }
 set("center wavelength", 1.55e-6);
-set("distance from waist", 0);
+set("distance from waist", 2e-6-fiber_distance);
+
 
 
 # platform-------------------------------------------
@@ -208,32 +250,6 @@ set("material","Si (Silicon) - Palik");
 set("override mesh order from material database",1);
 set("mesh order",2);
 
-vtx = [LBX,LBY;
-       LBX,LBY - pos_extend - 1e-6;
-       UBX,LBY - pos_extend - 1e-6;
-       UBX,LBY];
-addpoly;
-set("name","-wg1");
-set("vertices",vtx);
-set("z min",0);
-set("z max",height);
-set("material","Si (Silicon) - Palik");
-set("override mesh order from material database",1);
-set("mesh order",2);
-
-vtx = [LBX,LBY;
-       LBX,UBY;
-       LBX - pos_extend - 1e-6,UBY;
-       LBX - pos_extend - 1e-6,LBY];
-addpoly;
-set("name","-wg2");
-set("vertices",vtx);
-set("z min",0);
-set("z max",height);
-set("material","Si (Silicon) - Palik");
-set("override mesh order from material database",1);
-set("mesh order",2);
-
 select("::model::other");
 addtogroup("DO_NOT_OPEN");
 
@@ -249,6 +265,17 @@ set("y", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
+addmodeexpansion;
+set("name","exp_wg1");
+set("monitor type","2D Y-normal");
+set("x min", LBX - 1e-6);
+set("x max", UBX + 1e-6);
+set("y", UBY + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+setexpansion("P_wg1", "::model::monitor::P_wg1");
+set("mode selection", "fundamental TE mode");
+
 # wg2(+x)
 addpower;
 set("name","P_wg2");
@@ -258,6 +285,17 @@ set("y min", LBY - 1e-6);
 set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
+
+addmodeexpansion;
+set("name","exp_wg2");
+set("monitor type","2D X-normal");
+set("x", UBX + 1e-6);
+set("y min", LBY - 1e-6);
+set("y max", UBY + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+setexpansion("P_wg2", "::model::monitor::P_wg2");
+set("mode selection", "fundamental TE mode");
 
 # wg1(-y)
 addpower;
@@ -289,13 +327,13 @@ set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
-# wg2 center (+x)
+# wg1 far (+y)
 addpower;
-set("name","P_wg2_center");
-set("monitor type","2D X-normal");
-set("x", UBX + pos_extend - 1e-6);
-set("y", (UBY+LBY)/2);
-set("y span", (UBY-LBY)/6);
+set("name","P_wg1_far");
+set("monitor type","2D Y-normal");
+set("x min", LBX - 1e-6);
+set("x max", UBX + 1e-6);
+set("y", UBY + pos_extend - 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
     
@@ -328,7 +366,6 @@ set("x max", UBX + pos_extend);
 set("y min", LBY - neg_extend);
 set("y max", UBY + pos_extend);
 set("z", height + fiber_distance + 0.5e-6);
-
 # central top view
 addpower;
 set("name","top_view");
@@ -347,7 +384,14 @@ set("x min", LBX - neg_extend);
 set("x max", UBX + pos_extend);
 set("y min", LBY - neg_extend);
 set("y max", UBY + pos_extend);
-set("z", -BOX_thickness - 0.5e-6);
+if (scale_mode == 1)
+{
+    set("z", -BOX_thickness - 0.5e-6);
+}
+else
+{
+    set("z", -0.5e-6);
+}
 
 #-------grating template-----------------------
 xy = 0;
@@ -369,13 +413,13 @@ for (i = 1:1:N)
     para.struc2 = struct;
     
     # change to row para
-    para.struc1 = {"y1":xy(i)+unit(i)/2-l1(i)/2 , "y2":xy(i)+unit(i)/2+l1(i)/2};
-    para.struc2 = {"y1":xy(i)+unit(i)/2-l2(i)/2 , "y2":xy(i)+unit(i)/2+l2(i)/2};
+    para.struc1 = {"y1":xy(i)+unit(i)-l1(i)-l4(i), "y2":xy(i)+unit(i)-l4(i)};
+    para.struc2 = {"y1":xy(i)+unit(i)-l2(i)-l5(i), "y2":xy(i)+unit(i)-l5(i)};
     row_structs{i} = para;    
     
     # change to col para
-    para.struc1 = {"x1":xy(i)+unit(i)/2-l1(i)/2 , "x2":xy(i)+unit(i)/2+l1(i)/2};
-    para.struc2 = {"x1":xy(i)+unit(i)/2-l2(i)/2 , "x2":xy(i)+unit(i)/2+l2(i)/2};
+    para.struc1 = {"x1":xy(i)+unit(i)-l1(i)-l4(i), "x2":xy(i)+unit(i)-l4(i)};
+    para.struc2 = {"x1":xy(i)+unit(i)-l2(i)-l5(i), "x2":xy(i)+unit(i)-l5(i)};
     col_structs{i} = para;
 }
 
@@ -487,4 +531,5 @@ select("::model::grating");
 addtogroup("::model::DO_NOT_OPEN");
 select("::model::template");
 delete;
+
 

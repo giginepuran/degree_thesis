@@ -15,14 +15,15 @@ import matplotlib.pyplot as plt
 
 colors = ['b', 'g', 'r', 'c', 'm']
 legends = ['l1', 'l2', 'l3', 'l4', 'l5']
+
 start_para_no = 4
 end_para_no = 5
 parameter_num = end_para_no - start_para_no + 1
 dimension = parameter_num * 5
-uniform = False
-gbest_path = 'D:/0421_TFAPO_0.473/Gen50/gbest'
-# 'E:/degree_thesis/local/0428_TFAPO4_0.434/Gen45/gbest'
-# 'D:/0421_TCAPO_0.473/Gen50/gbest'
+uniform = True
+title = 'TFAPO2 uniform spline Gen45'
+gbest_path = 'D:/0427~0429set/0428_TFAPO2_0.434/Gen45/gbest'
+# 'D:/0427~0429set//Gen50/gbest'
 # 'E:/degree_thesis/local/saving_path/Gen10/gbest'
 paras = []
 for para_no in range(1, dimension+1):
@@ -59,7 +60,7 @@ lsf_para = 'ln = [para__1__, para__2__, para__3__, para__4__, para__5__,\n' + \
            '      para__16__,para__17__,para__18__,para__19__,para__20__]*1e-9;\n'
 for para_no in range(1, parameter_num+1):
     script = lsf_para
-    script = script.replace('ln', f'l{para_no}')
+    script = script.replace('ln', f'l{para_no+start_para_no-1}')
     for i in range(1, 21):
         script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 2)}')
     print(script)
@@ -67,4 +68,5 @@ for para_no in range(1, parameter_num+1):
 plt.legend(loc="upper right")
 plt.xlim(1, 20)
 plt.xticks(np.arange(1, 21))
+plt.title(title)
 plt.show()

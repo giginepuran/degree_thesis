@@ -4,7 +4,7 @@ set("mesh accuracy", 2);
 select("::model::source");
 set("wavelength span", 100e-9);
 set("center wavelength", 1.55e-6);
-for (pol = 0:10:180)
+for (pol = 0:15:180)
 {
     select("::model::source");
     set("polarization angle", pol);

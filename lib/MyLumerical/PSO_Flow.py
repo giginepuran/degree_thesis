@@ -172,3 +172,12 @@ def interpolation_by_swarm_nonuniform_extrapolate(particle_x: np.ndarray, dimens
         after_interpolation.append(f(x_new))
     return after_interpolation
 
+
+def local_fdtd_fsp(local_transfer_folder, population, fdtd: lumapi.FDTD):
+    for p in range(1, population + 1):
+        fdtd.eval('newproject;')
+        fdtd.load(f'{local_transfer_folder}/ind{p}.fsp')
+        fdtd.eval('run;')
+        fdtd.eval('newproject;')
+        time.sleep(10)
+

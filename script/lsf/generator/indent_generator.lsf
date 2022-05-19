@@ -1,0 +1,61 @@
+load("ori.fsp");
+switchtolayout;
+select("::model::DO_NOT_OPEN::silicon");
+vtx = get("vertices");
+LBX = vtx(1,1);
+LBY = vtx(1,2);
+UBX = vtx(3,1);
+UBY = vtx(3,2);
+
+addmodeexpansion;
+set("name","exp_wg1");
+set("monitor type","2D Y-normal");
+set("x min", LBX - 1e-6);
+set("x max", UBX + 1e-6);
+set("y", UBY + 1e-6);
+set("z", 110e-9);
+set("z span", 0.5e-6);
+setexpansion("P_wg1", "::model::monitor::P_wg1");
+set("mode selection", "fundamental TE mode");
+    
+addmodeexpansion;
+set("name","exp_wg2");
+set("monitor type","2D X-normal");
+set("x", UBX + 1e-6);
+set("y min", LBY - 1e-6);
+set("y max", UBY + 1e-6);
+set("z", 110e-9);
+set("z span", 0.5e-6);
+setexpansion("P_wg2", "::model::monitor::P_wg2");
+set("mode selection", "fundamental TE mode");
+
+wg_length = 6.5e-6;
+indent_step = 20e-9;
+for (n = 1:35)
+{
+    indent = n * indent_step;
+    select("::model::DO_NOT_OPEN::other::wg1");
+    set("vertices", [LBX+indent, UBY;
+                     LBX+indent, UBY+wg_length;
+                     UBX, UBY+wg_length;
+                     UBX, UBY]);
+    select("::model::DO_NOT_OPEN::other::wg2");
+    set("vertices", [UBX, LBY+indent;
+                     UBX, UBY;
+                     UBX+wg_length, UBY;
+                     UBX+wg_length, LBY+indent]);
+                     
+    select("::model::monitor::P_wg1");
+    set("x min", LBX+indent-1e-6);
+    select("::model::monitor::P_wg2");
+    set("y min", LBY+indent-1e-6);
+    select("::model::monitor::P_wg2_far");
+    set("y min", LBY+indent-1e-6);
+    select("::model::exp_wg1");
+    set("x min", LBX - 1e-6 + indent);
+    select("::model::exp_wg2");
+    set("y min", LBY - 1e-6 + indent);
+    
+    save("indent_"+num2str(indent*1e9)+".fsp");
+}
+

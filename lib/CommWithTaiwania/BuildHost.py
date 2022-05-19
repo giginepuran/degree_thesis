@@ -12,7 +12,7 @@ from lib.PSO import particle
 from lib.MyLumerical import PSO_Flow
 
 
-def build_work(population: int, max_generation: int, drive: GoogleDrive,
+def build_work(is_local: bool, population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
                dimension: int, floor: list, ceiling: list, saving_path: str,
                build_lsf: str, fom_function):
@@ -53,22 +53,27 @@ def build_work(population: int, max_generation: int, drive: GoogleDrive,
         PSO_Flow.step3_build_fsp_by_swarm(fdtd, my_swarm, build_lsf,
                                           local_transfer_folder, dimension, population)
 
-        print('Updating *.fsp to drive transfer folder ...')
-        drive = Transfer.refresh_drive_by_gauth()
-        if not Transfer.update_fsps(drive, transfer_folder_id, fsp_info_list, local_transfer_folder, population):
-            return
+        if is_local:
+            print('FDTDing *.fsp in local ...')
+            PSO_Flow.local_fdtd_fsp(local_transfer_folder, population, fdtd)
+        else:
+            print('Updating *.fsp to drive transfer folder ...')
+            drive = Transfer.refresh_drive_by_gauth()
+            if not Transfer.update_fsps(drive, transfer_folder_id, fsp_info_list, local_transfer_folder, population):
+                return
 
-        print('Updating mode.txt to drive transfer folder ...')
-        drive = Transfer.refresh_drive_by_gauth()
-        Transfer.change_mode_then_upload(drive, transfer_folder_id, mode_file_info, local_transfer_folder, 'doing_fdtd')
+            print('Updating mode.txt to drive transfer folder ...')
+            drive = Transfer.refresh_drive_by_gauth()
+            Transfer.change_mode_then_upload(drive, transfer_folder_id, mode_file_info, local_transfer_folder,
+                                             'doing_fdtd')
 
-        print('Checking mode.txt ...')
-        Transfer.keep_check_mode(mode_file_info, local_transfer_folder, 'building_fsp', period=30)
+            print('Checking mode.txt ...')
+            Transfer.keep_check_mode(mode_file_info, local_transfer_folder, 'building_fsp', period=30)
 
-        print('Downloading *.fsp ...')
-        drive = Transfer.refresh_drive_by_gauth()
-        for fsp_info in fsp_info_list:
-            Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
+            print('Downloading *.fsp ...')
+            drive = Transfer.refresh_drive_by_gauth()
+            for fsp_info in fsp_info_list:
+                Get.download_drive_file(drive, fsp_info, dst=local_transfer_folder, move=True)
 
         print('Collecting data from *.fsp ...')
         fom = PSO_Flow.step4_get_fom_of_each_particle(fdtd, population, local_transfer_folder, fom_function)

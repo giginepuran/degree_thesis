@@ -1,0 +1,3 @@
+T1 = transmission("::model::monitor::P_wg2");
+M = getresult("::model::monitor::exp_wg1","expansion for P_wg1");
+FOM = M.T_net*T1;
