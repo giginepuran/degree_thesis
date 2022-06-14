@@ -1,36 +1,38 @@
 newproject;
 # 1:for taiwania, 2:for local fdtd saving time
-scale_mode = 2;
+scale_mode = 1;
 # 1:for pso workflow, 2:for expand bandwidth with 200nm
 band_mode = 1;
 # 1:for pso workflow, 2:for accuracy fsp
 accu_mode = 1;
 # 1:for python, 2:for lumerical
 mode = 1;
+# 1:w/o, 2:with indent
+indent_mode = 1;
 if (mode == 1)
 {
-    l1 = [para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__, para1__]*1e-9;
-    l2 = [para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__, para2__]*1e-9;
-    l3 = [para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__, para3__]*1e-9;
-    l4 = [para4__, para4__, para4__, para4__, para4__,
-          para4__, para4__, para4__, para4__, para4__,
-          para4__, para4__, para4__, para4__, para4__,
-          para4__, para4__, para4__, para4__, para4__]*1e-9;
-    l5 = [para5__, para5__, para5__, para5__, para5__,
-          para5__, para5__, para5__, para5__, para5__,
-          para5__, para5__, para5__, para5__, para5__,
-          para5__, para5__, para5__, para5__, para5__]*1e-9;
-    cell_tilt = para6__;
-    fiber_offset = para7__*1e-9;
+    l1 = round([para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__])*1e-9;
+    l2 = round([para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__])*1e-9;
+    l3 = round([para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__])*1e-9;
+    l4 = round([para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__])*1e-9;
+    l5 = round([para5__, para5__, para5__, para5__, para5__,
+                para5__, para5__, para5__, para5__, para5__,
+                para5__, para5__, para5__, para5__, para5__,
+                para5__, para5__, para5__, para5__, para5__])*1e-9;
+    cell_tilt = round(para6__*10)/10;
+    fiber_offset = 0*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
     tilt    = 10;
@@ -73,6 +75,14 @@ unit = l3;
 height = 220e-9;
 N = 20;
 scale = sum(unit);
+if (indent_mode == 1)
+{
+    indent = 0;
+}
+else
+{
+    indent = scale * tct;
+}
 # x' = x*(tct*tct+1)+y*tct,
 # y' = x*tct+y*(tct*tct+1);
 p2x = 0*(tct*tct+1)+scale*tct;
@@ -137,11 +147,11 @@ else
 set("z max", height + fiber_distance + 0.6e-6);
 if (accu_mode == 2)
 {
-    set("mesh accuracy",7);
+    set("mesh accuracy",5);
 }
 
 # source-------------------------------------------
-shift = fiber_offset;
+shift = fiber_distance*tan(tilt*pi/180);
 addgaussian;
 set("injection axis","z");
 set("direction","Backward");
@@ -224,8 +234,8 @@ set("override mesh order from material database",1);
 set("mesh order",5);
 
 # waveguides
-vtx = [LBX,UBY;
-       LBX,UBY + pos_extend + 1e-6;
+vtx = [LBX + indent,UBY;
+       LBX + indent,UBY + pos_extend + 1e-6;
        UBX,UBY + pos_extend + 1e-6;
        UBX,UBY];
 addpoly;
@@ -237,10 +247,10 @@ set("material","Si (Silicon) - Palik");
 set("override mesh order from material database",1);
 set("mesh order",2);
 
-vtx = [UBX,LBY;
+vtx = [UBX,LBY + indent;
        UBX,UBY;
        UBX + pos_extend + 1e-6,UBY;
-       UBX + pos_extend + 1e-6,LBY];
+       UBX + pos_extend + 1e-6,LBY + indent];
 addpoly;
 set("name","wg2");
 set("vertices",vtx);
@@ -259,7 +269,7 @@ groupscope("::model::monitor");
 addpower;
 set("name","P_wg1");
 set("monitor type","2D Y-normal");
-set("x min", LBX - 1e-6);
+set("x min", LBX - 1e-6 + indent);
 set("x max", UBX + 1e-6);
 set("y", UBY + 1e-6);
 set("z", height/2);
@@ -268,7 +278,7 @@ set("z span", 0.5e-6);
 addmodeexpansion;
 set("name","exp_wg1");
 set("monitor type","2D Y-normal");
-set("x min", LBX - 1e-6);
+set("x min", LBX - 1e-6 + indent);
 set("x max", UBX + 1e-6);
 set("y", UBY + 1e-6);
 set("z", height/2);
@@ -281,7 +291,7 @@ addpower;
 set("name","P_wg2");
 set("monitor type","2D X-normal");
 set("x", UBX + 1e-6);
-set("y min", LBY - 1e-6);
+set("y min", LBY - 1e-6 + indent);
 set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
@@ -290,7 +300,7 @@ addmodeexpansion;
 set("name","exp_wg2");
 set("monitor type","2D X-normal");
 set("x", UBX + 1e-6);
-set("y min", LBY - 1e-6);
+set("y min", LBY - 1e-6 + indent);
 set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
@@ -322,7 +332,7 @@ addpower;
 set("name","P_wg2_far");
 set("monitor type","2D X-normal");
 set("x", UBX + pos_extend - 1e-6);
-set("y min", LBY - 1e-6);
+set("y min", LBY - 1e-6 + indent);
 set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
@@ -331,7 +341,7 @@ set("z span", 0.5e-6);
 addpower;
 set("name","P_wg1_far");
 set("monitor type","2D Y-normal");
-set("x min", LBX - 1e-6);
+set("x min", LBX - 1e-6 + indent);
 set("x max", UBX + 1e-6);
 set("y", UBY + pos_extend - 1e-6);
 set("z", height/2);

@@ -37,7 +37,7 @@ def step3_build_fsp_by_swarm(fdtd: lumapi.FDTD, my_swarm: swarm.Swarm, build_lsf
         para = my_swarm.particles[p-1].get_x()
         build_script = open(f'{build_lsf}', 'r').read()
         for i in range(1, dimension + 1, 1):
-            build_script = build_script.replace(f'para{i}__', f'{round(para[i - 1][0], 2)}')
+            build_script = build_script.replace(f'para{i}__', f'{round(para[i - 1][0], 2)}')  # original round 2
         LumAPI.build_fsp(fdtd, build_script)
         fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
         fdtd.eval("newproject;")
@@ -114,7 +114,7 @@ def step3_build_fsp_by_swarm_interpolation(fdtd: lumapi.FDTD, my_swarm: swarm.Sw
             set_of_para = parameters[para_no-1]
             for para_no_no in range(1, 20+1):  # 20+1
                 build_script = build_script.replace(f'para{para_no}__{para_no_no}__',
-                                                    f'{round(set_of_para[para_no_no - 1], 2)}')
+                                                    f'{round(set_of_para[para_no_no - 1], 2)}')  # original round 2
         LumAPI.build_fsp(fdtd, build_script)
         fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
         fdtd.eval("newproject;")
@@ -140,7 +140,7 @@ def step3_build_fsp_by_swarm_interpolation_nonuniform(fdtd: lumapi.FDTD, my_swar
             set_of_para = parameters[para_no-1]
             for para_no_no in range(1, 20+1):  # 20+1
                 build_script = build_script.replace(f'para{para_no}__{para_no_no}__',
-                                                    f'{round(set_of_para[para_no_no - 1], 2)}')
+                                                    f'{round(set_of_para[para_no_no - 1], 2)}')  # original round 2
         LumAPI.build_fsp(fdtd, build_script)
         fdtd.save(f'{local_transfer_folder}/ind{p}.fsp')
         fdtd.eval("newproject;")

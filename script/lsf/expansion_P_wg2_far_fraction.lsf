@@ -1,0 +1,2 @@
+M = getresult("::model::monitor::exp_wg2","expansion for P_wg2_far");
+FOM = M.T_net;

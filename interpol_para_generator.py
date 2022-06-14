@@ -16,57 +16,62 @@ import matplotlib.pyplot as plt
 colors = ['b', 'g', 'r', 'c', 'm']
 legends = ['l1', 'l2', 'l3', 'l4', 'l5']
 
-start_para_no = 4
-end_para_no = 5
+start_para_no = 1
+end_para_no = 4
 parameter_num = end_para_no - start_para_no + 1
 dimension = parameter_num * 5
 uniform = True
-title = 'TFAPO2 uniform spline Gen45'
-gbest_path = 'D:/0427~0429set/0428_TFAPO2_0.434/Gen45/gbest'
+title_template = 'TFAPO uniform spline Gen__GEN__'
+gbest_path_template = 'E:/degree_thesis/local/saving_path/Gen__GEN__/p1/pbest'
 # 'D:/0427~0429set//Gen50/gbest'
 # 'E:/degree_thesis/local/saving_path/Gen10/gbest'
-paras = []
-for para_no in range(1, dimension+1):
-    paras.append(float(open(f'{gbest_path}/para{para_no}.txt', 'r').read()))
-paras = np.array(paras)
+for gen in range(1, 19+1):
+    title = title_template.replace('__GEN__', f'{gen}')
+    gbest_path = gbest_path_template.replace('__GEN__', f'{gen}')
+    paras = []
+    for para_no in range(1, dimension+1):
+        paras.append(float(open(f'{gbest_path}/para{para_no}.txt', 'r').read()))
+    paras = np.array(paras)
 
-after_interpolation = []
-num_of_point_in_a_set = dimension // parameter_num
+    after_interpolation = []
+    num_of_point_in_a_set = dimension // parameter_num
 
-if uniform:
+    if uniform:
+        for para_no in range(1, parameter_num+1):
+            x = np.linspace(1, 20, num=num_of_point_in_a_set, endpoint=True)
+            y = paras[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
+            f = interp1d(x, y.reshape(num_of_point_in_a_set,), kind='cubic')
+            x_new = np.linspace(1, 20, num=20, endpoint=True)
+            y_new = f(x_new)
+            after_interpolation.append(y_new)
+            plt.plot(x_new, y_new, colors[para_no+start_para_no-2], label=legends[para_no+start_para_no-2])
+            plt.scatter(x, y, color=colors[para_no+start_para_no-2], marker='D')
+    else:
+        x_new = np.array([xx for xx in range(1, 21)])
+        x = np.array([1, 3, 7, 12, 17])
+        for para_no in range(1, parameter_num+1):
+            y = paras[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
+            f = interp1d(x, y.reshape(num_of_point_in_a_set, ), kind='cubic', fill_value='extrapolate')
+            y_new = f(x_new)
+            after_interpolation.append(y_new)
+            plt.plot(x_new, y_new, colors[para_no+start_para_no-2], label=legends[para_no+start_para_no-2])
+            plt.scatter(x, y, color=colors[para_no+start_para_no-2], marker='D')
+
+    lsf_para = 'ln = [para__1__, para__2__, para__3__, para__4__, para__5__,\n' + \
+               '      para__6__, para__7__, para__8__, para__9__, para__10__,\n' + \
+               '      para__11__,para__12__,para__13__,para__14__,para__15__,\n' + \
+               '      para__16__,para__17__,para__18__,para__19__,para__20__]*1e-9;\n'
     for para_no in range(1, parameter_num+1):
-        x = np.linspace(1, 20, num=num_of_point_in_a_set, endpoint=True)
-        y = paras[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
-        f = interp1d(x, y.reshape(num_of_point_in_a_set,), kind='cubic')
-        x_new = np.linspace(1, 20, num=20, endpoint=True)
-        y_new = f(x_new)
-        after_interpolation.append(y_new)
-        plt.plot(x_new, y_new, colors[para_no+start_para_no-2], label=legends[para_no+start_para_no-2])
-        plt.scatter(x, y, color=colors[para_no+start_para_no-2], marker='D')
-else:
-    x_new = np.array([xx for xx in range(1, 21)])
-    x = np.array([1, 3, 7, 12, 17])
-    for para_no in range(1, parameter_num+1):
-        y = paras[(para_no-1)*num_of_point_in_a_set:para_no*num_of_point_in_a_set]
-        f = interp1d(x, y.reshape(num_of_point_in_a_set, ), kind='cubic', fill_value='extrapolate')
-        y_new = f(x_new)
-        after_interpolation.append(y_new)
-        plt.plot(x_new, y_new, colors[para_no+start_para_no-2], label=legends[para_no+start_para_no-2])
-        plt.scatter(x, y, color=colors[para_no+start_para_no-2], marker='D')
+        script = lsf_para
+        script = script.replace('ln', f'l{para_no+start_para_no-1}')
+        for i in range(1, 21):
+            script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 2)}')
+        print(script)
 
-lsf_para = 'ln = [para__1__, para__2__, para__3__, para__4__, para__5__,\n' + \
-           '      para__6__, para__7__, para__8__, para__9__, para__10__,\n' + \
-           '      para__11__,para__12__,para__13__,para__14__,para__15__,\n' + \
-           '      para__16__,para__17__,para__18__,para__19__,para__20__]*1e-9;\n'
-for para_no in range(1, parameter_num+1):
-    script = lsf_para
-    script = script.replace('ln', f'l{para_no+start_para_no-1}')
-    for i in range(1, 21):
-        script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 2)}')
-    print(script)
+    plt.legend(loc="upper right")
+    plt.xlim(1, 20)
+    plt.xticks(np.arange(1, 21))
+    plt.title(title)
+    plt.savefig(f"{gen}.png")
+    plt.show()
 
-plt.legend(loc="upper right")
-plt.xlim(1, 20)
-plt.xticks(np.arange(1, 21))
-plt.title(title)
-plt.show()

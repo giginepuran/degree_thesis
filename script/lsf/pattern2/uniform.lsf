@@ -11,47 +11,50 @@ mode = 1;
 indent_mode = 1;
 if (mode == 1)
 {
-    l1 = round([203, 203, 203, 203, 203,
-                203, 203, 203, 203, 203,
-                203, 203, 203, 203, 203,
-                203, 203, 203, 203, 203])*1e-9;
-    l2 = round([para1__1__, para1__2__, para1__3__, para1__4__, para1__5__,
-                para1__6__, para1__7__, para1__8__, para1__9__, para1__10__,
-                para1__11__, para1__12__, para1__13__, para1__14__, para1__15__,
-                para1__16__, para1__17__, para1__18__, para1__19__, para1__20__])*1e-9;
-    l3 = round([para2__1__, para2__2__, para2__3__, para2__4__, para2__5__,
-                para2__6__, para2__7__, para2__8__, para2__9__, para2__10__,
-                para2__11__, para2__12__, para2__13__, para2__14__, para2__15__,
-                para2__16__, para2__17__, para2__18__, para2__19__, para2__20__])*1e-9;
-    l4 = round([para3__1__, para3__2__, para3__3__, para3__4__, para3__5__,
-                para3__6__, para3__7__, para3__8__, para3__9__, para3__10__,
-                para3__11__, para3__12__, para3__13__, para3__14__, para3__15__,
-                para3__16__, para3__17__, para3__18__, para3__19__, para3__20__])*1e-9;
-    cell_tilt = 3.1;
-    fiber_offset = 0;
+    l1 = round([para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__])*1e-9;
+    l2 = round([para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__])*1e-9;
+    l3 = round([para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__])*1e-9;
+    l4 = round([para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__])*1e-9;
+    cell_tilt = round(para5__*10)/10;
+    fiber_offset = 0*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
     tilt    = 10;
 } else if (mode == 2)
 {
-    l1 = [158.60, 158.60, 158.60, 158.60, 158.60,
-          158.60, 158.60, 158.60, 158.60, 158.60,
-          158.60, 158.60, 158.60, 158.60, 158.60,
-          158.60, 158.60, 158.60, 158.60, 158.60]*1e-9;
-    l2 = [379.06, 379.06, 379.06, 379.06, 379.06,
-          379.06, 379.06, 379.06, 379.06, 379.06,
-          379.06, 379.06, 379.06, 379.06, 379.06,
-          379.06, 379.06, 379.06, 379.06, 379.06]*1e-9;
-    l3 = [11.78, 11.78, 11.78, 11.78, 11.78,
-          11.78, 11.78, 11.78, 11.78, 11.78,
-          11.78, 11.78, 11.78, 11.78, 11.78,
-          11.78, 11.78, 11.78, 11.78, 11.78]*1e-9;
-    l4 = round([636, 636, 636, 636, 636,
-                636, 636, 636, 636, 636,
-                636, 636, 636, 636, 636,
-                636, 636, 636, 636, 636])*1e-9;
+    l1 = [130, 130, 130, 130, 130, 
+          130, 130, 130, 130, 130, 
+          130, 130, 130, 130, 130,
+          130, 130, 130, 130, 130]*1e-9;
+          
+    l2 = [180, 180, 180, 180, 180,
+          180, 180, 180, 180, 180,
+          180, 180, 180, 180, 180,
+          180, 180, 180, 180, 180]*1e-9;
+          
+    l3 = [60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60]*1e-9;
+
+    l4 = [650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650]*1e-9;
     cell_tilt = 0;
-    fiber_offset = 0;
+    fiber_offset = 1500*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
     tilt    = 10;
@@ -284,16 +287,6 @@ set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
-# wg2 far (+x)
-addpower;
-set("name","P_wg2_far");
-set("monitor type","2D X-normal");
-set("x", UBX + pos_extend - 1e-6);
-set("y min", LBY - 1e-6 + indent);
-set("y max", UBY + 1e-6);
-set("z", height/2);
-set("z span", 0.5e-6);
-
 addmodeexpansion;
 set("name","exp_wg2");
 set("monitor type","2D X-normal");
@@ -303,7 +296,6 @@ set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 setexpansion("P_wg2", "::model::monitor::P_wg2");
-setexpansion("P_wg2_far", "::model::monitor::P_wg2_far");
 set("mode selection", "fundamental TE mode");
 
 # wg1(-y)
@@ -322,6 +314,16 @@ set("name","P_-wg2");
 set("monitor type","2D X-normal");
 set("x", LBX - 1e-6);
 set("y min", LBY - 1e-6);
+set("y max", UBY + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
+# wg2 far (+x)
+addpower;
+set("name","P_wg2_far");
+set("monitor type","2D X-normal");
+set("x", UBX + pos_extend - 1e-6);
+set("y min", LBY - 1e-6 + indent);
 set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
