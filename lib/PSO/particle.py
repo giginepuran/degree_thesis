@@ -71,5 +71,13 @@ class Particle:
     def get_fom(self):
         return self._FOM
 
+    def inherit(self, dimension , path):
+        self._x = np.random.rand(dimension, 1)
+        paras = []
+        for p in range(1, dimension+1):
+            with open(f'{path}/para{p}.txt') as f:
+                lines = f.readlines()
+                paras.append(float(lines[0]))
+        self._x = np.reshape(np.array(paras), (dimension, 1))
 
 

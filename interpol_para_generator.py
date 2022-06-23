@@ -14,7 +14,7 @@ from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
 colors = ['b', 'g', 'r', 'c', 'm']
-legends = ['l1', 'l2', 'l3', 'l4', 'l5']
+legends = ['l1', 'l2', 'l3', 'l5', 'l4']
 
 start_para_no = 1
 end_para_no = 4
@@ -22,10 +22,10 @@ parameter_num = end_para_no - start_para_no + 1
 dimension = parameter_num * 5
 uniform = True
 title_template = 'TFAPO uniform spline Gen__GEN__'
-gbest_path_template = 'E:/degree_thesis/local/saving_path/Gen__GEN__/p1/pbest'
+gbest_path_template = 'D:/final/0619_APOUNI_0.44/fixed/gbest'
 # 'D:/0427~0429set//Gen50/gbest'
 # 'E:/degree_thesis/local/saving_path/Gen10/gbest'
-for gen in range(1, 19+1):
+for gen in range(17, 17+1):
     title = title_template.replace('__GEN__', f'{gen}')
     gbest_path = gbest_path_template.replace('__GEN__', f'{gen}')
     paras = []
@@ -65,13 +65,13 @@ for gen in range(1, 19+1):
         script = lsf_para
         script = script.replace('ln', f'l{para_no+start_para_no-1}')
         for i in range(1, 21):
-            script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 2)}')
+            script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 0)}')
         print(script)
 
     plt.legend(loc="upper right")
     plt.xlim(1, 20)
     plt.xticks(np.arange(1, 21))
-    plt.title(title)
+    # plt.title(title)
     plt.savefig(f"{gen}.png")
     plt.show()
 

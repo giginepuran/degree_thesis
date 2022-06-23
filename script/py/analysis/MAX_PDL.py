@@ -5,38 +5,38 @@ import time
 import math
 
 
-PDL_path = 'D:/0419_oriSet/0419_TFAPO_0.465/MAX_PDL'
+PDL_path = 'D:/final/0619_APOUNI_0.44/maxPDL'
 fdtd = lumapi.FDTD()
-t_0 = []
-t_90 = []
+ce_0 = []
+ce_90 = []
 PDL = []
 wl = []
-head = 1475
-tail = 1625
-step = 10
+head = 1500
+tail = 1600
+step = 5
 
 for wavelength in range(head, tail+1, step):
     wl.append(wavelength)
 
     fdtd.load(f'{PDL_path}/{wavelength}_pol0.fsp')
     run_lsf_in_fdtd(fdtd, "E:/degree_thesis/script/lsf/PDL_Analysis.lsf")
-    T0 = 10*math.log10(get_value_from_fdtd(fdtd, "T_tot"))
+    ce0 = 10*math.log10(get_value_from_fdtd(fdtd, "CE_tot"))
     fdtd.eval("newproject;")
     time.sleep(2)
 
     fdtd.load(f'{PDL_path}/{wavelength}_pol90.fsp')
     run_lsf_in_fdtd(fdtd, "E:/degree_thesis/script/lsf/PDL_Analysis.lsf")
-    T90 = 10*math.log10(get_value_from_fdtd(fdtd, "T_tot"))
+    ce90 = 10*math.log10(get_value_from_fdtd(fdtd, "CE_tot"))
     fdtd.eval("newproject;")
     time.sleep(2)
 
-    pdl = T0-T90
+    pdl = ce0-ce90
     PDL.append(pdl if pdl > 0 else -pdl)
-    t_0.append(T0)
-    t_90.append(T90)
+    ce_0.append(ce0)
+    ce_90.append(ce90)
 
-plt.plot(wl, t_0, "-b", label="pol-0")
-plt.plot(wl, t_90, "-r", label="pol-90")
+plt.plot(wl, ce_0, "-b", label="pol-0")
+plt.plot(wl, ce_90, "-r", label="pol-90")
 plt.legend(loc="upper right")
 plt.xlim(head, tail)
 plt.ylim(-10, 0)
@@ -54,3 +54,7 @@ plt.xlabel("wavelength (nm)")
 plt.ylabel("PDL (dB)")
 plt.show()
 plt.clf()
+
+print(PDL)
+print(ce_0)
+print(ce_90)

@@ -6,37 +6,32 @@ band_mode = 1;
 # 1:for pso workflow, 2:for accuracy fsp
 accu_mode = 1;
 # 1:for python, 2:for lumerical
-mode = 2;
+mode = 1;
 # 1:w/o, 2:with indent
-indent_mode = 2;
+indent_mode = 1;
 if (mode == 1)
 {
-    l1 = [para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__, para1__,
-          para1__, para1__, para1__, para1__, para1__]*1e-9;
-    l2 = [para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__, para2__,
-          para2__, para2__, para2__, para2__, para2__]*1e-9;
-    l3 = [para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__, para3__,
-          para3__, para3__, para3__, para3__, para3__]*1e-9;
-    l4 = [para4__, para4__, para4__, para4__, para4__,
-          para4__, para4__, para4__, para4__, para4__,
-          para4__, para4__, para4__, para4__, para4__,
-          para4__, para4__, para4__, para4__, para4__]*1e-9;
-    l5 = [para5__, para5__, para5__, para5__, para5__,
-          para5__, para5__, para5__, para5__, para5__,
-          para5__, para5__, para5__, para5__, para5__,
-          para5__, para5__, para5__, para5__, para5__]*1e-9;
-    cell_tilt = para6__;
-    fiber_offset = para7__*1e-9;
+    l1 = round([para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__,
+                para1__, para1__, para1__, para1__, para1__])*1e-9;
+    l2 = round([para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__,
+                para2__, para2__, para2__, para2__, para2__])*1e-9;
+    l3 = round([para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__,
+                para3__, para3__, para3__, para3__, para3__])*1e-9;
+    l4 = round([para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__,
+                para4__, para4__, para4__, para4__, para4__])*1e-9;
+    cell_tilt = round(para5__*10)/10;
+    fiber_offset = 0*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
     tilt    = 10;
-    wg_tilt = para8__;
 } else if (mode == 2)
 {
     l1 = [130, 130, 130, 130, 130, 
@@ -48,32 +43,26 @@ if (mode == 1)
           180, 180, 180, 180, 180,
           180, 180, 180, 180, 180,
           180, 180, 180, 180, 180]*1e-9;
-
-    l3 = [650, 650, 650, 650, 650,
-          650, 650, 650, 650, 650,
-          650, 650, 650, 650, 650,
-          650, 650, 650, 650, 650]*1e-9;
-    
-    l4 = [60, 60, 60, 60, 60,
+          
+    l3 = [60, 60, 60, 60, 60,
           60, 60, 60, 60, 60,
           60, 60, 60, 60, 60,
           60, 60, 60, 60, 60]*1e-9;
-          
-    l5 = [30, 30, 30, 30, 30,
-          30, 30, 30, 30, 30,
-          30, 30, 30, 30, 30,
-          30, 30, 30, 30, 30]*1e-9;
+
+    l4 = [650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650,
+          650, 650, 650, 650, 650]*1e-9;
     cell_tilt = 0;
     fiber_offset = 1500*1e-9;
     step1 = 220*1e-9;
     step2 = 70*1e-9;
     tilt    = 10;
-    wg_tilt = para8__;
 }
 tct = tan(cell_tilt*pi/180);
 cct = cos(cell_tilt*pi/180);
 sct = sin(cell_tilt*pi/180);
-unit = l3;
+unit = l4;
 height = 220e-9;
 N = 20;
 scale = sum(unit);
@@ -149,11 +138,11 @@ else
 set("z max", height + fiber_distance + 0.6e-6);
 if (accu_mode == 2)
 {
-    set("mesh accuracy",7);
+    set("mesh accuracy",5);
 }
 
 # source-------------------------------------------
-shift = fiber_offset;
+shift = fiber_distance*tan(tilt*pi/180);
 addgaussian;
 set("injection axis","z");
 set("direction","Backward");
@@ -298,6 +287,16 @@ set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 
+# wg2 far (+x)
+addpower;
+set("name","P_wg2_far");
+set("monitor type","2D X-normal");
+set("x", UBX + pos_extend - 1e-6);
+set("y min", LBY - 1e-6 + indent);
+set("y max", UBY + 1e-6);
+set("z", height/2);
+set("z span", 0.5e-6);
+
 addmodeexpansion;
 set("name","exp_wg2");
 set("monitor type","2D X-normal");
@@ -307,6 +306,7 @@ set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
 setexpansion("P_wg2", "::model::monitor::P_wg2");
+setexpansion("P_wg2_far", "::model::monitor::P_wg2_far");
 set("mode selection", "fundamental TE mode");
 
 # wg1(-y)
@@ -325,16 +325,6 @@ set("name","P_-wg2");
 set("monitor type","2D X-normal");
 set("x", LBX - 1e-6);
 set("y min", LBY - 1e-6);
-set("y max", UBY + 1e-6);
-set("z", height/2);
-set("z span", 0.5e-6);
-
-# wg2 far (+x)
-addpower;
-set("name","P_wg2_far");
-set("monitor type","2D X-normal");
-set("x", UBX + pos_extend - 1e-6);
-set("y min", LBY - 1e-6 + indent);
 set("y max", UBY + 1e-6);
 set("z", height/2);
 set("z span", 0.5e-6);
@@ -425,13 +415,13 @@ for (i = 1:1:N)
     para.struc2 = struct;
     
     # change to row para
-    para.struc1 = {"y1":xy(i)+unit(i)-l1(i)-l4(i), "y2":xy(i)+unit(i)-l4(i)};
-    para.struc2 = {"y1":xy(i)+unit(i)-l2(i)-l5(i), "y2":xy(i)+unit(i)-l5(i)};
+    para.struc1 = {"y1":xy(i)+unit(i)-l1(i)-l3(i), "y2":xy(i)+unit(i)-l3(i)};
+    para.struc2 = {"y1":xy(i)+unit(i)-l2(i), "y2":xy(i)+unit(i)};
     row_structs{i} = para;    
     
     # change to col para
-    para.struc1 = {"x1":xy(i)+unit(i)-l1(i)-l4(i), "x2":xy(i)+unit(i)-l4(i)};
-    para.struc2 = {"x1":xy(i)+unit(i)-l2(i)-l5(i), "x2":xy(i)+unit(i)-l5(i)};
+    para.struc1 = {"x1":xy(i)+unit(i)-l1(i)-l3(i), "x2":xy(i)+unit(i)-l3(i)};
+    para.struc2 = {"x1":xy(i)+unit(i)-l2(i), "x2":xy(i)+unit(i)};
     col_structs{i} = para;
 }
 
