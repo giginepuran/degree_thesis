@@ -44,7 +44,7 @@ for wl_index in range(n):
     plt.ylim(0, ceiling[wl_index])
     plt.title(f"wavelength = {wavelength[wl_index]} um")
     plt.xlabel("polarization (degree)")
-    plt.ylabel("Coupling efficiency (dB)")
+    plt.ylabel("coupling efficiency")
     plt.show()
     plt.clf()
 

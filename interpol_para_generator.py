@@ -13,8 +13,8 @@ import numpy as np
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
-colors = ['b', 'g', 'r', 'c', 'm']
-legends = ['l1', 'l2', 'l3', 'l5', 'l4']
+colors = ['b', 'g', 'r', 'c']
+legends = ['l1', 'l2', 'l3', 'l5']
 
 start_para_no = 1
 end_para_no = 4
@@ -63,7 +63,7 @@ for gen in range(17, 17+1):
                '      para__16__,para__17__,para__18__,para__19__,para__20__]*1e-9;\n'
     for para_no in range(1, parameter_num+1):
         script = lsf_para
-        script = script.replace('ln', f'l{para_no+start_para_no-1}')
+        script = script.replace('ln', legends[para_no-1])
         for i in range(1, 21):
             script = script.replace(f'para__{i}__', f'{round(after_interpolation[para_no-1][i-1], 0)}')
         print(script)
@@ -71,6 +71,8 @@ for gen in range(17, 17+1):
     plt.legend(loc="upper right")
     plt.xlim(1, 20)
     plt.xticks(np.arange(1, 21))
+    plt.xlabel("Period")
+    plt.ylabel("(nm)")
     # plt.title(title)
     plt.savefig(f"{gen}.png")
     plt.show()
