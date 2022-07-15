@@ -33,6 +33,7 @@ def build_work(is_local: bool, population: int, max_generation: int, drive: Goog
     print('Creating swarm ...')
     my_swarm = PSO_Flow.step2_create_swarm(dimension, population, floor, ceiling)
     if os.path.isdir(inherit_path):
+        print('----- Inherit path is found. -----')
         my_swarm.particles[0].inherit(dimension, inherit_path)
 
     print(f'Getting ids of mode_file and fsp_list ...')

@@ -15,7 +15,7 @@ from lib.MyLumerical import PSO_Flow
 def build_work(is_local: bool, population: int, max_generation: int, drive: GoogleDrive,
                transfer_folder_id: str, local_transfer_folder: str,
                dimension: int, floor: list, ceiling: list, saving_path: str,
-               build_lsf: str, fom_function):
+               build_lsf: str, fom_function, inherit_path: str):
     print('PSO settings:')
     print(f'local transfer folder : {local_transfer_folder}')
     print(f'          saving path : {saving_path}')
@@ -32,6 +32,9 @@ def build_work(is_local: bool, population: int, max_generation: int, drive: Goog
 
     print('Creating swarm ...')
     my_swarm = PSO_Flow.step2_create_swarm(dimension, population, floor, ceiling)
+    if os.path.isdir(inherit_path):
+        print('----- Inherit path is found. -----')
+        my_swarm.particles[0].inherit(dimension, inherit_path)
 
     print(f'Getting ids of mode_file and fsp_list ...')
     mode_file_info = Get.get_file_info_by_subtitle(drive, transfer_folder_id, 'mode.txt', all_folder=False)[0]

@@ -13,8 +13,9 @@ import numpy as np
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
+plt.rc('font',family='Times New Roman')
 colors = ['b', 'g', 'r', 'c']
-legends = ['l1', 'l2', 'l3', 'l5']
+legends = ['$\it{l}_\mathrm{1}$', '$\it{l}_\mathrm{2}$', '$\it{l}_\mathrm{3}$', '$\it{l}_\mathrm{5}$']
 
 start_para_no = 1
 end_para_no = 4
@@ -22,10 +23,10 @@ parameter_num = end_para_no - start_para_no + 1
 dimension = parameter_num * 5
 uniform = True
 title_template = 'TFAPO uniform spline Gen__GEN__'
-gbest_path_template = 'D:/final/0619_APOUNI_0.44/fixed/gbest'
-# 'D:/0427~0429set//Gen50/gbest'
+gbest_path_template = 'D:/final/0619_APOUNI_0.44/analysis/gbest'
+# 'D:/final/0619_APOUNI_0.44/analysis/gbest'
 # 'E:/degree_thesis/local/saving_path/Gen10/gbest'
-for gen in range(17, 17+1):
+for gen in range(1, 1+1):
     title = title_template.replace('__GEN__', f'{gen}')
     gbest_path = gbest_path_template.replace('__GEN__', f'{gen}')
     paras = []
@@ -72,7 +73,7 @@ for gen in range(17, 17+1):
     plt.xlim(1, 20)
     plt.xticks(np.arange(1, 21))
     plt.xlabel("Period")
-    plt.ylabel("(nm)")
+    plt.ylabel("Length (nm)")
     # plt.title(title)
     plt.savefig(f"{gen}.png")
     plt.show()
